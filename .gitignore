@@ -2,7 +2,7 @@
 .direnv
 result
 test_data/
-
+output_directory/
 # Added by cargo
 #
 # already existing elements were commented out
