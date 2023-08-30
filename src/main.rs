@@ -1,80 +1,72 @@
-use clap::{App, Arg};
-use crossterm::style::{Color, Print, ResetColor, SetForegroundColor,ExecutableCommand};
 use indicatif::{ProgressBar, ProgressStyle};
-use std::{io::stdout, path::Path, process::Command};
+use std::{
+    io,
+    path::Path,
+    fs::{self, File},
+};
+use rayon::prelude::*;
+use tar::Archive;
 
 fn main() -> color_eyre::eyre::Result<()> {
     color_eyre::install()?;
-    let app = App::new("extract")
-    .arg(
-        Arg::with_name("files")
-            .required(true)
-            .multiple(true)
-            .help("Files to be extracted"),
+
+    let app = clap::App::new("extract")
+        .arg(
+            clap::Arg::with_name("files")
+                .required(true)
+                .multiple(true)
+                .help("Files to be extracted"),
         );
 
-let matches = app.get_matches();
+    let matches = app.get_matches();
     let files: Vec<_> = matches.values_of("files").unwrap().collect();
+
     let pb = ProgressBar::new(files.len() as u64);
-    pb.set_style(ProgressStyle::default_bar()
-        .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})")?
-        .progress_chars("#>-"));
+    pb.set_style(
+        ProgressStyle::default_bar()
+            .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})")?,
+    );
 
     files.par_iter().for_each(|file| {
-        if let Err(err) = extract_file(file) {
-            // You can handle the error here, perhaps by printing a message.
+        if let Err(err) = extract_file(file, "output_directory/") {
             println!("Error extracting file '{}': {}", file, err);
         }
         pb.inc(1);
     });
 
-
     pb.finish_with_message("All files extracted successfully!");
     Ok(())
 }
+fn extract_tar(file: &str, output_dir: &str) -> color_eyre::eyre::Result<()> {
+    let tar_file = File::open(file)?;
+    let mut a = Archive::new(tar_file);
 
-fn extract_file(file: &str) -> color_eyre::eyre::Result<()> {
+    for i in a.entries()? {
+        let mut i = i?;
+        let entry_path = i.header().path()?;
+        let full_path = Path::new(output_dir).join(entry_path);
+
+        if i.header().entry_type().is_dir() {
+            fs::create_dir_all(&full_path)?;
+        } else {
+            fs::create_dir_all(&full_path.parent().unwrap())?;
+
+            let mut file = File::create(&full_path)?;
+            io::copy(&mut i, &mut file)?;
+        }
+    }
+
+    Ok(())
+}
+
+fn extract_file(file: &str, output_dir: &str) -> color_eyre::eyre::Result<()> {
     if !Path::new(file).exists() {
         return Err(color_eyre::eyre::eyre!("'{}' - file does not exist", file));
     }
-
-    let command = match Path::new(file).extension().and_then(|s| s.to_str()) {
-        Some("tar") | Some("tar.gz") | Some("tar.xz") | Some("tbz2") | Some("tgz") | Some("txz") => "tar",
-        Some("lzma") => "unlzma",
-        Some("bz2") => "bunzip2",
-        Some("rar") => "unrar",
-        Some("gz") => "gunzip",
-        Some("zip") => "unzip",
-        Some("z") => "uncompress",
-        Some("7z") | Some("arj") | Some("cab") | Some("chm") | Some("deb") | Some("dmg") | Some("iso") | Some("lzh") | Some("msi") | Some("rpm") | Some("udf") | Some("wim") | Some("xar") => "7z",
-        Some("xz") => "unxz",
-        Some("exe") => "cabextract",
-        _ => {
-            println!("extract: '{}' - unknown archive method", file);
-            return Ok(());
-        }
-    };
-
-    let args = match command {
-        "tar" => vec!["xvf", file],
-        "unrar" => vec!["x", "-ad", file],
-        "7z" => vec!["x", file],
-        _ => vec![file],
-    };
-
-    let output = Command::new(command).args(&args).output()?;
-
-    if !output.status.success() {
-        let mut stdout = stdout();
-        stdout
-            .execute(SetForegroundColor(Color::Red))?
-            .execute(Print(format!(
-                "Failed to extract '{}', command returned error\n",
-                file
-            )))?
-            .execute(ResetColor)?;
-        return Err(eyre::eyre!("Extraction failed for {}", file));
+    if let Some("tar") = Path::new(file).extension().and_then(|s| s.to_str()) {
+        extract_tar(file, output_dir)?;
+    } else {
+        println!("extract: '{}' - unknown archive method", file);
     }
-
     Ok(())
 }
