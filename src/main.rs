@@ -1,10 +1,7 @@
 use clap::{App, Arg};
-use crossterm::style::{Color, Print, ResetColor, SetForegroundColor};
-use crossterm::ExecutableCommand;
+use crossterm::style::{Color, Print, ResetColor, SetForegroundColor,ExecutableCommand};
 use indicatif::{ProgressBar, ProgressStyle};
-use std::io::stdout;
-use std::path::Path;
-use std::process::Command;
+use std::{io::stdout, path::Path, process::Command};
 
 fn main() -> color_eyre::eyre::Result<()> {
     color_eyre::install()?;
@@ -16,7 +13,6 @@ fn main() -> color_eyre::eyre::Result<()> {
             .help("Files to be extracted"),
         );
 
-use rayon::prelude::*;
 let matches = app.get_matches();
     let files: Vec<_> = matches.values_of("files").unwrap().collect();
     let pb = ProgressBar::new(files.len() as u64);
