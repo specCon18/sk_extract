@@ -1,72 +1,84 @@
-use indicatif::{ProgressBar, ProgressStyle};
-use std::{
-    io,
-    path::Path,
-    fs::{self, File},
-};
-use rayon::prelude::*;
-use tar::Archive;
-
-fn main() -> color_eyre::eyre::Result<()> {
-    color_eyre::install()?;
-
-    let app = clap::App::new("extract")
-        .arg(
-            clap::Arg::with_name("files")
-                .required(true)
-                .multiple(true)
-                .help("Files to be extracted"),
-        );
-
-    let matches = app.get_matches();
-    let files: Vec<_> = matches.values_of("files").unwrap().collect();
-
-    let pb = ProgressBar::new(files.len() as u64);
-    pb.set_style(
-        ProgressStyle::default_bar()
-            .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})")?,
-    );
-
-    files.par_iter().for_each(|file| {
-        if let Err(err) = extract_file(file, "output_directory/") {
-            println!("Error extracting file '{}': {}", file, err);
-        }
-        pb.inc(1);
-    });
-
-    pb.finish_with_message("All files extracted successfully!");
-    Ok(())
-}
-fn extract_tar(file: &str, output_dir: &str) -> color_eyre::eyre::Result<()> {
-    let tar_file = File::open(file)?;
-    let mut a = Archive::new(tar_file);
-
-    for i in a.entries()? {
-        let mut i = i?;
-        let entry_path = i.header().path()?;
-        let full_path = Path::new(output_dir).join(entry_path);
-
-        if i.header().entry_type().is_dir() {
-            fs::create_dir_all(&full_path)?;
-        } else {
-            fs::create_dir_all(&full_path.parent().unwrap())?;
-
-            let mut file = File::create(&full_path)?;
-            io::copy(&mut i, &mut file)?;
-        }
-    }
-
-    Ok(())
+mod extractors;
+use extractors::{extract_zip, extract_rar, extract_tar};
+fn main() {
+    std::process::exit(run());
 }
 
-fn extract_file(file: &str, output_dir: &str) -> color_eyre::eyre::Result<()> {
-    if !Path::new(file).exists() {
-        return Err(color_eyre::eyre::eyre!("'{}' - file does not exist", file));
+    /*
+     TODO: [ ] setup rayon to handle concurrent file processsing when passed
+     more than one file
+    */
+    /*
+     TODO: [ ] Write for loop to iter over all extensions of a file to handle
+     files that are tared and then compressed ex: foo.tar.gz, foo.tar.gz
+    */
+    /*
+     TODO: [ ] add support for decompression of:
+     [ ] bz2
+     [ ] tbz2
+     [ ] tgz
+     [ ] txz
+     [ ] lzma
+     [ ] gz
+     [ ] z
+     [ ] 7z
+     [ ] arj
+     [ ] cab
+     [ ] arj
+     [ ] cab
+     [ ] chm
+     [ ] deb
+     [ ] dmg
+     [ ] iso
+     [ ] lzh
+     [ ] msi
+     [ ] rpm
+     [ ] udf
+     [ ] wim
+     [ ] xar
+     [ ] exe
+    */
+fn run() -> i32 {
+    let args: Vec<_> = std::env::args().collect();
+    if args.len() < 2 {
+        println!("Usage: {} <filename>", args[0]);
+        return 1;
     }
-    if let Some("tar") = Path::new(file).extension().and_then(|s| s.to_str()) {
-        extract_tar(file, output_dir)?;
-    } else {
-        println!("extract: '{}' - unknown archive method", file);
+    let fname = std::path::Path::new(&*args[1]);
+    if let Some(extension) = fname.extension().and_then(|s| s.to_str()) {
+        match extension {
+            "zip" => {
+                if let Err(err) = extract_zip(&fname) {
+                    println!("Error extracting ZIP: {}", err);
+                    return 1;
+                }
+            }
+            "rar" => {
+                if let Err(err) = extract_rar(&fname) {
+                    println!("Error extracting RAR: {}", err);
+                    return 1;
+                }
+            }
+            "tar" => {
+                if let Err(err) = extract_tar(&fname) {
+                    println!("Error extracting TAR: {}", err);
+                    return 1;
+                }
+            }
+            // "xz" => {
+            //     if let Err(err) = extract_tar(&fname) {
+            //         println!("Error extracting XZ: {}", err);
+            //         return 1;
+            //     }
+            // }
+            _ => {
+                println!("Unsupported file extension: {}", extension);
+                return 1;
+            }
+        }
+        return 0;
     }
-    Ok(())
+
+    println!("Unknown file format");
+    return 1;
 }
