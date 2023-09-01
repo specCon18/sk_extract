@@ -1,5 +1,32 @@
 mod extractors;
-use extractors::{extract_zip, extract_rar, extract_tar};
+use extractors::{
+    extract_zip,
+    extract_rar,
+    extract_tar,
+    extract_bz2,
+    extract_tbz2,
+    extract_tgz,
+    extract_txz,
+    extract_lzma,
+    extract_gz,
+    extract_gz,
+    extract_xz,
+    extract_z,
+    extract_7z,
+    extract_arj,
+    extract_cab,
+    extract_chm,
+    extract_deb,
+    extract_dmg,
+    extract_iso,
+    extract_lzh,
+    extract_msi,
+    extract_rpm,
+    extract_udf,
+    extract_wim,
+    extract_xar,    
+    extract_exe   
+};
 fn main() {
     std::process::exit(run());
 }
@@ -11,31 +38,6 @@ fn main() {
     /*
      TODO: [ ] Write for loop to iter over all extensions of a file to handle
      files that are tared and then compressed ex: foo.tar.gz, foo.tar.gz
-    */
-    /*
-     TODO: [ ] add support for decompression of:
-     [] bz2
-     [] tbz2
-     [] tgz
-     [] txz
-     [] lzma
-     [] gz
-     [] xz
-     [] z
-     [] 7z
-     [] arj
-     [] cab
-     [] chm
-     [] deb
-     [] dmg
-     [] iso
-     [] lzh
-     [] msi
-     [] rpm
-     [] udf
-     [] wim
-     [] xar
-     [] exe
     */
 fn run() -> i32 {
     let args: Vec<_> = std::env::args().collect();
@@ -64,138 +66,140 @@ fn run() -> i32 {
                     return 1;
                 }
             }
-            // "xz" => {
-            //     if let Err(err) = extract_xz(&fname) {
-            //         println!("Error extracting XZ: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "gz" => {
-            //     if let Err(err) = extract_gz(&fname) {
-            //         println!("Error extracting GZ: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "bz2" => {
-            //     if let Err(err) = extract_bz2(&fname) {
-            //         println!("Error extracting BZ2: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "tbz2" => {
-            //     if let Err(err) = extract_tbz2(&fname) {
-            //         println!("Error extracting TBZ2: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "txz" => {
-            //     if let Err(err) = extract_txz(&fname) {
-            //         println!("Error extracting TXZ: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "tgz" => {
-            //     if let Err(err) = extract_tgz(&fname) {
-            //         println!("Error extracting TGZ: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "lzma" => {
-            //     if let Err(err) = extract_lzma(&fname) {
-            //         println!("Error extracting LZMA: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "z" => {
-            //     if let Err(err) = extract_z(&fname) {
-            //         println!("Error extracting Z: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "7z" => {
-            //     if let Err(err) = extract_7z(&fname) {
-            //         println!("Error extracting 7Z: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "arj" => {
-            //     if let Err(err) = extract_arj(&fname) {
-            //         println!("Error extracting ARJ: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "cab" => {
-            //     if let Err(err) = extract_cab(&fname) {
-            //         println!("Error extracting CAB: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "chm" => {
-            //     if let Err(err) = extract_chm(&fname) {
-            //         println!("Error extracting CHM: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "deb" => {
-            //     if let Err(err) = extract_deb(&fname) {
-            //         println!("Error extracting DEB: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "dmg" => {
-            //     if let Err(err) = extract_dmg(&fname) {
-            //         println!("Error extracting DMG: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "iso" => {
-            //     if let Err(err) = extract_iso(&fname) {
-            //         println!("Error extracting ISO: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "lzh" => {
-            //     if let Err(err) = extract_lzh(&fname) {
-            //         println!("Error extracting LZH: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "msi" => {
-            //     if let Err(err) = extract_msi(&fname) {
-            //         println!("Error extracting MSI: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "rpm" => {
-            //     if let Err(err) = extract_rpm(&fname) {
-            //         println!("Error extracting RPM: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "udf" => {
-            //     if let Err(err) = extract_udf(&fname) {
-            //         println!("Error extracting UDF: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "wim" => {
-            //     if let Err(err) = extract_wim(&fname) {
-            //         println!("Error extracting WIM: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "xar" => {
-            //     if let Err(err) = extract_udf(&fname) {
-            //         println!("Error extracting XAR: {}", err);
-            //         return 1;
-            //     }
-            // }
-            // "exe" => {
-            //     if let Err(err) = extract_exe(&fname) {
-            //         println!("Error extracting EXE: {}", err);
-            //         return 1;
-            //     }
-            // }
+            /*
+            "xz" => {
+                if let Err(err) = extract_xz(&fname) {
+                    println!("Error extracting XZ: {}", err);
+                    return 1;
+                }
+            }
+            "gz" => {
+                if let Err(err) = extract_gz(&fname) {
+                    println!("Error extracting GZ: {}", err);
+                    return 1;
+                }
+            }
+            "bz2" => {
+                if let Err(err) = extract_bz2(&fname) {
+                    println!("Error extracting BZ2: {}", err);
+                    return 1;
+                }
+            }
+            "tbz2" => {
+                if let Err(err) = extract_tbz2(&fname) {
+                    println!("Error extracting TBZ2: {}", err);
+                    return 1;
+                }
+            }
+            "txz" => {
+                if let Err(err) = extract_txz(&fname) {
+                    println!("Error extracting TXZ: {}", err);
+                    return 1;
+                }
+            }
+            "tgz" => {
+                if let Err(err) = extract_tgz(&fname) {
+                    println!("Error extracting TGZ: {}", err);
+                    return 1;
+                }
+            }
+            "lzma" => {
+                if let Err(err) = extract_lzma(&fname) {
+                    println!("Error extracting LZMA: {}", err);
+                    return 1;
+                }
+            }
+            "z" => {
+                if let Err(err) = extract_z(&fname) {
+                    println!("Error extracting Z: {}", err);
+                    return 1;
+                }
+            }
+            "7z" => {
+                if let Err(err) = extract_7z(&fname) {
+                    println!("Error extracting 7Z: {}", err);
+                    return 1;
+                }
+            }
+            "arj" => {
+                if let Err(err) = extract_arj(&fname) {
+                    println!("Error extracting ARJ: {}", err);
+                    return 1;
+                }
+            }
+            "cab" => {
+                if let Err(err) = extract_cab(&fname) {
+                    println!("Error extracting CAB: {}", err);
+                    return 1;
+                }
+            }
+            "chm" => {
+                if let Err(err) = extract_chm(&fname) {
+                    println!("Error extracting CHM: {}", err);
+                    return 1;
+                }
+            }
+            "deb" => {
+                if let Err(err) = extract_deb(&fname) {
+                    println!("Error extracting DEB: {}", err);
+                    return 1;
+                }
+            }
+            "dmg" => {
+                if let Err(err) = extract_dmg(&fname) {
+                    println!("Error extracting DMG: {}", err);
+                    return 1;
+                }
+            }
+            "iso" => {
+                if let Err(err) = extract_iso(&fname) {
+                    println!("Error extracting ISO: {}", err);
+                    return 1;
+                }
+            }
+            "lzh" => {
+                if let Err(err) = extract_lzh(&fname) {
+                    println!("Error extracting LZH: {}", err);
+                    return 1;
+                }
+            }
+            "msi" => {
+                if let Err(err) = extract_msi(&fname) {
+                    println!("Error extracting MSI: {}", err);
+                    return 1;
+                }
+            }
+            "rpm" => {
+                if let Err(err) = extract_rpm(&fname) {
+                    println!("Error extracting RPM: {}", err);
+                    return 1;
+                }
+            }
+            "udf" => {
+                if let Err(err) = extract_udf(&fname) {
+                    println!("Error extracting UDF: {}", err);
+                    return 1;
+                }
+            }
+            "wim" => {
+                if let Err(err) = extract_wim(&fname) {
+                    println!("Error extracting WIM: {}", err);
+                    return 1;
+                }
+            }
+            "xar" => {
+                if let Err(err) = extract_udf(&fname) {
+                    println!("Error extracting XAR: {}", err);
+                    return 1;
+                }
+            }
+            "exe" => {
+                if let Err(err) = extract_exe(&fname) {
+                    println!("Error extracting EXE: {}", err);
+                    return 1;
+                }
+            }
+            */
             _ => {
                 println!("Unsupported file extension: {}", extension);
                 return 1;

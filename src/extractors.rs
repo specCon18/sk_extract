@@ -1,30 +1,5 @@
 use std::{fs, io, path::Path};
 use unrar::Archive;
-use xz2::bufread::XzDecoder;
-
-// pub fn extract_xz(xz_file: &Path) -> io::Result<()> {
-//     let file = fs::File::open(xz_file)?;
-//     let decompressor = XzDecoder::new(file);
-//     let mut archive = tar::Archive::new(decompressor);
-
-//     for entry in archive.entries()? {
-//         let mut entry = entry?;
-
-//         let entry_path = entry.path()?;
-//         let full_path = Path::new("output_directory/").join(entry_path);
-
-//         if entry.header().entry_type().is_dir() {
-//             fs::create_dir_all(&full_path)?;
-//         } else {
-//             fs::create_dir_all(&full_path.parent().unwrap())?;
-
-//             let mut file = fs::File::create(&full_path)?;
-//             io::copy(&mut entry, &mut file)?;
-//         }
-//     }
-
-//     Ok(())
-// }
 
 pub fn extract_zip(zip_file: &Path) -> io::Result<()> {
     let file = fs::File::open(zip_file)?;
@@ -119,3 +94,25 @@ pub fn extract_rar(rar_file: &Path) -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+    pub fn extract_bz2(){}
+    pub fn extract_tbz2(){}
+    pub fn extract_tgz(){}
+    pub fn extract_txz(){}
+    pub fn extract_lzma(){}
+    pub fn extract_gz(){}
+    pub fn extract_xz(){}
+    pub fn extract_z(){}
+    pub fn extract_7z(){}
+    pub fn extract_arj(){}
+    pub fn extract_cab(){}
+    pub fn extract_chm(){}
+    pub fn extract_deb(){}
+    pub fn extract_dmg(){}
+    pub fn extract_iso(){}
+    pub fn extract_lzh(){}
+    pub fn extract_msi(){}
+    pub fn extract_rpm(){}
+    pub fn extract_udf(){}
+    pub fn extract_wim(){}
+    pub fn extract_xar(){}
+    pub fn extract_exe(){}
