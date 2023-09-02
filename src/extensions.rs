@@ -8,7 +8,6 @@ pub enum Extensions{
     Txz,
     Lzma,
     Gz,
-    Gz,
     Xz,
     Z,
     Sevenz,

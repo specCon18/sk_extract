@@ -1,6 +1,9 @@
-use std::{fs, io, path::Path};
+/*
+TODO_2: implement remaining extractor functions and write tests
+*/
+use std::{fs, io::{self, Write}, path::Path, fs::File};
 use unrar::Archive;
-
+// use lzma::reader::LzmaReader;
 pub fn extract_zip(zip_file: &Path) -> io::Result<()> {
     let file = fs::File::open(zip_file)?;
     let mut archive = zip::ZipArchive::new(file)?;
@@ -94,13 +97,37 @@ pub fn extract_rar(rar_file: &Path) -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+// pub fn extract_xz(xz_file: &Path, output_dir: &Path) -> io::Result<()> {
+//     // Open the xz file for reading
+//     let file = File::open(xz_file)?;
+
+//     // Create a LzmaReader to decompress the data
+//     let mut xz_reader = LzmaReader::new_decompressor(file)?;
+
+//     // Read the decompressed data into a buffer
+//     let mut decompressed_data = Vec::new();
+//     xz_reader.read_to_end(&mut decompressed_data)?;
+
+//     // Get the filename from the original path
+//     let xz_filename = xz_file
+//         .file_name()
+//         .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "Invalid file name"))?;
+    
+//     // Create the output file path by appending the filename to the output directory
+//     let output_path = output_dir.join(xz_filename);
+
+//     // Create or overwrite the output file and write the decompressed data to it
+//     let mut output_file = File::create(output_path)?;
+//     output_file.write_all(&decompressed_data)?;
+
+//     Ok(())
+// }
     pub fn extract_bz2(){}
     pub fn extract_tbz2(){}
     pub fn extract_tgz(){}
     pub fn extract_txz(){}
     pub fn extract_lzma(){}
     pub fn extract_gz(){}
-    pub fn extract_xz(){}
     pub fn extract_z(){}
     pub fn extract_7z(){}
     pub fn extract_arj(){}

@@ -1,44 +1,48 @@
+/*
+TODO_3: setup rayon to handle parallel file processsing when passed
+more than one file and square up concurrency model for files with
+more than one extension.
+*/
+/*
+TODO_1: define supported extensions as structs and write an extensions enum
+*/
 mod extractors;
+// mod extensions;
+// use extenstions::{
+    // File,
+    // Extensions
+// }
+use std::{path::Path, fs};
 use extractors::{
     extract_zip,
     extract_rar,
     extract_tar,
-    extract_bz2,
-    extract_tbz2,
-    extract_tgz,
-    extract_txz,
-    extract_lzma,
-    extract_gz,
-    extract_gz,
-    extract_xz,
-    extract_z,
-    extract_7z,
-    extract_arj,
-    extract_cab,
-    extract_chm,
-    extract_deb,
-    extract_dmg,
-    extract_iso,
-    extract_lzh,
-    extract_msi,
-    extract_rpm,
-    extract_udf,
-    extract_wim,
-    extract_xar,    
-    extract_exe   
+    // extract_xz,
+    // extract_bz2,
+    // extract_tbz2,
+    // extract_tgz,
+    // extract_txz,
+    // extract_lzma,
+    // extract_gz,
+    // extract_z,
+    // extract_7z,
+    // extract_arj,
+    // extract_cab,
+    // extract_chm,
+    // extract_deb,
+    // extract_dmg,
+    // extract_iso,
+    // extract_lzh,
+    // extract_msi,
+    // extract_rpm,
+    // extract_udf,
+    // extract_wim,
+    // extract_xar,    
+    // extract_exe   
 };
 fn main() {
     std::process::exit(run());
 }
-
-    /*
-     TODO: [ ] setup rayon to handle concurrent file processsing when passed
-     more than one file
-    */
-    /*
-     TODO: [ ] Write for loop to iter over all extensions of a file to handle
-     files that are tared and then compressed ex: foo.tar.gz, foo.tar.gz
-    */
 fn run() -> i32 {
     let args: Vec<_> = std::env::args().collect();
     if args.len() < 2 {
@@ -66,13 +70,18 @@ fn run() -> i32 {
                     return 1;
                 }
             }
+            // "xz" => {
+            //     let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+            //     if let Err(err) = fs::create_dir_all(&output_directory) {
+            //         println!("Error creating output directory: {}", err);
+            //         return 1;
+            //     }
+            //     if let Err(err) = extract_xz(&fname, &output_directory) {
+            //         println!("Error extracting XZ: {}", err);
+            //         return 1;
+            //     }
+            // }
             /*
-            "xz" => {
-                if let Err(err) = extract_xz(&fname) {
-                    println!("Error extracting XZ: {}", err);
-                    return 1;
-                }
-            }
             "gz" => {
                 if let Err(err) = extract_gz(&fname) {
                     println!("Error extracting GZ: {}", err);
