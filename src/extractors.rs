@@ -1,9 +1,10 @@
 /*
 TODO_2: implement remaining extractor functions and write tests
 */
-use std::{fs::{self, File}, io, path::Path,};
+use std::{fs::{self, File}, io::{self, ErrorKind}, path::Path,};
 use unrar::Archive;
 use lzma::reader::LzmaReader;
+use flate2::read::GzDecoder;
 pub fn extract_zip(zip_file: &Path) -> io::Result<()> {
     let file = fs::File::open(zip_file)?;
     let mut archive = zip::ZipArchive::new(file)?;
@@ -116,24 +117,42 @@ pub fn extract_xz(input_path: &Path, output_directory: &Path) -> Result<(), io::
 
     Ok(())
 }
-    pub fn extract_bz2(){}
-    pub fn extract_tbz2(){}
-    pub fn extract_tgz(){}
-    pub fn extract_txz(){}
-    pub fn extract_lzma(){}
-    pub fn extract_gz(){}
-    pub fn extract_z(){}
-    pub fn extract_7z(){}
-    pub fn extract_arj(){}
-    pub fn extract_cab(){}
-    pub fn extract_chm(){}
-    pub fn extract_deb(){}
-    pub fn extract_dmg(){}
-    pub fn extract_iso(){}
-    pub fn extract_lzh(){}
-    pub fn extract_msi(){}
-    pub fn extract_rpm(){}
-    pub fn extract_udf(){}
-    pub fn extract_wim(){}
-    pub fn extract_xar(){}
-    pub fn extract_exe(){}
+pub fn extract_gz(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
+    // Open the input GZ file
+    let input_file = File::open(input_path)?;
+
+    // Create a GZ decompression reader
+    let mut decompressor = GzDecoder::new(input_file);
+
+    // Determine the output file path
+    let output_file_path = output_directory.join(input_path.file_stem().unwrap());
+
+    // Create the output file
+    let mut output_file = File::create(&output_file_path)?;
+
+    // Read from the decompressor and write to the output file
+    match io::copy(&mut decompressor, &mut output_file) {
+        Ok(_) => Ok(()),
+        Err(err) => Err(io::Error::new(ErrorKind::Other, err.to_string())),
+    }
+}
+    // pub fn extract_bz2(){}
+    // pub fn extract_tbz2(){}
+    // pub fn extract_tgz(){}
+    // pub fn extract_txz(){}
+    // pub fn extract_lzma(){}
+    // pub fn extract_z(){}
+    // pub fn extract_7z(){}
+    // pub fn extract_arj(){}
+    // pub fn extract_cab(){}
+    // pub fn extract_chm(){}
+    // pub fn extract_deb(){}
+    // pub fn extract_dmg(){}
+    // pub fn extract_iso(){}
+    // pub fn extract_lzh(){}
+    // pub fn extract_msi(){}
+    // pub fn extract_rpm(){}
+    // pub fn extract_udf(){}
+    // pub fn extract_wim(){}
+    // pub fn extract_xar(){}
+    // pub fn extract_exe(){}

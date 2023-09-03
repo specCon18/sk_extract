@@ -23,7 +23,7 @@ use extractors::{
     // extract_tgz,
     // extract_txz,
     // extract_lzma,
-    // extract_gz,
+    extract_gz,
     // extract_z,
     // extract_7z,
     // extract_arj,
@@ -81,13 +81,14 @@ fn run() -> i32 {
                     return 1;
                 }
             }
-            /*
             "gz" => {
-                if let Err(err) = extract_gz(&fname) {
+                let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+                if let Err(err) = extract_gz(&fname, &output_directory) {
                     println!("Error extracting GZ: {}", err);
                     return 1;
                 }
             }
+            /*
             "bz2" => {
                 if let Err(err) = extract_bz2(&fname) {
                     println!("Error extracting BZ2: {}", err);
