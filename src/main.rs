@@ -17,7 +17,7 @@ use extractors::{
     extract_zip,
     extract_rar,
     extract_tar,
-    // extract_xz,
+    extract_xz,
     // extract_bz2,
     // extract_tbz2,
     // extract_tgz,
@@ -70,17 +70,17 @@ fn run() -> i32 {
                     return 1;
                 }
             }
-            // "xz" => {
-            //     let output_directory = Path::new("output_directory"); // Change this to your desired output directory
-            //     if let Err(err) = fs::create_dir_all(&output_directory) {
-            //         println!("Error creating output directory: {}", err);
-            //         return 1;
-            //     }
-            //     if let Err(err) = extract_xz(&fname, &output_directory) {
-            //         println!("Error extracting XZ: {}", err);
-            //         return 1;
-            //     }
-            // }
+            "xz" => {
+                let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+                if let Err(err) = fs::create_dir_all(&output_directory) {
+                    println!("Error creating output directory: {}", err);
+                    return 1;
+                }
+                if let Err(err) = extract_xz(&fname, &output_directory) {
+                    println!("Error extracting XZ: {}", err);
+                    return 1;
+                }
+            }
             /*
             "gz" => {
                 if let Err(err) = extract_gz(&fname) {

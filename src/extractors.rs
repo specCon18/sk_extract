@@ -1,9 +1,9 @@
 /*
 TODO_2: implement remaining extractor functions and write tests
 */
-use std::{fs, io::{self, Write}, path::Path, fs::File};
+use std::{fs::{self, File}, io, path::Path,};
 use unrar::Archive;
-// use lzma::reader::LzmaReader;
+use lzma::reader::LzmaReader;
 pub fn extract_zip(zip_file: &Path) -> io::Result<()> {
     let file = fs::File::open(zip_file)?;
     let mut archive = zip::ZipArchive::new(file)?;
@@ -76,7 +76,7 @@ pub fn extract_rar(rar_file: &Path) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
- pub fn extract_tar(tar_file: &Path) -> io::Result<()> {
+pub fn extract_tar(tar_file: &Path) -> io::Result<()> {
     let tar_file = fs::File::open(tar_file)?;
     let mut a = tar::Archive::new(tar_file);
 
@@ -97,31 +97,25 @@ pub fn extract_rar(rar_file: &Path) -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-// pub fn extract_xz(xz_file: &Path, output_dir: &Path) -> io::Result<()> {
-//     // Open the xz file for reading
-//     let file = File::open(xz_file)?;
+pub fn extract_xz(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
+    // Open the input XZ file
+    let input_file = File::open(input_path)?;
 
-//     // Create a LzmaReader to decompress the data
-//     let mut xz_reader = LzmaReader::new_decompressor(file)?;
+    // Create a decompression reader
+    let mut decompressor = LzmaReader::new_decompressor(input_file)
+        .map_err(|err| io::Error::new(io::ErrorKind::Other, err))?;
 
-//     // Read the decompressed data into a buffer
-//     let mut decompressed_data = Vec::new();
-//     xz_reader.read_to_end(&mut decompressed_data)?;
+    // Determine the output file path
+    let output_file_path = output_directory.join(input_path.file_stem().unwrap());
 
-//     // Get the filename from the original path
-//     let xz_filename = xz_file
-//         .file_name()
-//         .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "Invalid file name"))?;
-    
-//     // Create the output file path by appending the filename to the output directory
-//     let output_path = output_dir.join(xz_filename);
+    // Create the output file
+    let mut output_file = File::create(&output_file_path)?;
 
-//     // Create or overwrite the output file and write the decompressed data to it
-//     let mut output_file = File::create(output_path)?;
-//     output_file.write_all(&decompressed_data)?;
+    // Read from the decompressor and write to the output file
+    io::copy(&mut decompressor, &mut output_file)?;
 
-//     Ok(())
-// }
+    Ok(())
+}
     pub fn extract_bz2(){}
     pub fn extract_tbz2(){}
     pub fn extract_tgz(){}

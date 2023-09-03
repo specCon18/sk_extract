@@ -1,5 +1,5 @@
 {
-  description = "Spec's NixOS-config";
+  description = "ExtractRS for all you decompression needs";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   };
@@ -19,13 +19,10 @@
           clippy
           lolcat
           rust-analyzer
-          xz  # Add xz (liblzma) to the build inputs
+          xz
+          pkg-config
         ];
 
-        # Add a shellHook to modify PKG_CONFIG_PATH
-        shellHook = ''
-          export PKG_CONFIG_PATH="${pkgs.xz}/lib/pkgconfig:$PKG_CONFIG_PATH"
-        '';
       };
     };
 }
