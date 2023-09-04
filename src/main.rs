@@ -1,7 +1,6 @@
 /*
 TODO_3: setup rayon to handle parallel file processsing when passed
-more than one file and square up concurrency model for files with
-more than one extension.
+more than one file
 */
 /*
 TODO_1: define supported extensions as structs and write an extensions enum
@@ -23,7 +22,6 @@ use extractors::{
     extract_tgz,
     extract_txz,
     extract_gz,
-    // extract_z,
     extract_7z,
     // extract_arj,
     // extract_cab,
