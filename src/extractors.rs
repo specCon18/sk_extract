@@ -172,9 +172,91 @@ pub fn extract_7z(input_path: &Path, output_directory: &Path) -> Result<(), io::
 
     Ok(())
 }
-    // pub fn extract_tbz2(){}
-    // pub fn extract_tgz(){}
-    // pub fn extract_txz(){}
+pub fn extract_tbz2(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
+    // Open the input TBZ2 file
+    let input_file = File::open(input_path)?;
+
+    // Create a BZ2 decompression reader
+    let bz2_reader = BzDecoder::new(input_file);
+
+    // Create a Tar archive reader
+    let mut archive = tar::Archive::new(bz2_reader);
+
+    for entry in archive.entries()? {
+        let mut entry = entry?;
+        let entry_path = entry.path()?;
+        let full_path = output_directory.join(entry_path);
+
+        if entry.header().entry_type().is_dir() {
+            fs::create_dir_all(&full_path)?;
+        } else {
+            fs::create_dir_all(&full_path.parent().unwrap())?;
+
+            let mut file = fs::File::create(&full_path)?;
+            io::copy(&mut entry, &mut file)?;
+        }
+    }
+
+    Ok(())
+}
+
+pub fn extract_tgz(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
+    // Open the input TGZ file
+    let input_file = File::open(input_path)?;
+
+    // Create a GZ decompression reader
+    let mut decompressor = GzDecoder::new(input_file);
+
+    // Create a Tar archive reader
+    let mut archive = tar::Archive::new(&mut decompressor);
+
+    for entry in archive.entries()? {
+        let mut entry = entry?;
+        let entry_path = entry.path()?;
+        let full_path = output_directory.join(entry_path);
+
+        if entry.header().entry_type().is_dir() {
+            fs::create_dir_all(&full_path)?;
+        } else {
+            fs::create_dir_all(&full_path.parent().unwrap())?;
+
+            let mut file = fs::File::create(&full_path)?;
+            io::copy(&mut entry, &mut file)?;
+        }
+    }
+
+    Ok(())
+}
+
+pub fn extract_txz(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
+    // Open the input TXZ file
+    let input_file = File::open(input_path)?;
+
+    // Create an XZ decompression reader
+    let mut decompressor = LzmaReader::new_decompressor(input_file)
+        .map_err(|err| io::Error::new(io::ErrorKind::Other, err))?;
+
+    // Create a Tar archive reader
+    let mut archive = tar::Archive::new(&mut decompressor);
+
+    for entry in archive.entries()? {
+        let mut entry = entry?;
+        let entry_path = entry.path()?;
+        let full_path = output_directory.join(entry_path);
+
+        if entry.header().entry_type().is_dir() {
+            fs::create_dir_all(&full_path)?;
+        } else {
+            fs::create_dir_all(&full_path.parent().unwrap())?;
+
+            let mut file = fs::File::create(&full_path)?;
+            io::copy(&mut entry, &mut file)?;
+        }
+    }
+
+    Ok(())
+}
+
     // pub fn extract_arj(){}
     // pub fn extract_cab(){}
     // pub fn extract_chm(){}

@@ -19,10 +19,9 @@ use extractors::{
     extract_tar,
     extract_lzma,
     extract_bz2,
-    // extract_tbz2,
-    // extract_tgz,
-    // extract_txz,
-    // extract_lzma,
+    extract_tbz2,
+    extract_tgz,
+    extract_txz,
     extract_gz,
     // extract_z,
     extract_7z,
@@ -72,13 +71,20 @@ fn run() -> i32 {
             }
             "xz" => {
                 let output_directory = Path::new("output_directory"); // Change this to your desired output directory
-                if let Err(err) = fs::create_dir_all(&output_directory) {
-                    println!("Error creating output directory: {}", err);
-                    return 1;
-                }
-                if let Err(err) = extract_lzma(&fname, &output_directory) {
-                    println!("Error extracting XZ: {}", err);
-                    return 1;
+                if fname.to_str().unwrap().ends_with(".tar.xz") {
+                    if let Err(err) = extract_txz(&fname,&output_directory) {
+                        println!("Error extracting TXZ: {}", err);
+                        return 1;
+                    }
+                } else {
+                    if let Err(err) = fs::create_dir_all(&output_directory) {
+                        println!("Error creating output directory: {}", err);
+                        return 1;
+                    }
+                    if let Err(err) = extract_lzma(&fname, &output_directory) {
+                        println!("Error extracting XZ: {}", err);
+                        return 1;
+                    }
                 }
             }
             "gz" => {
@@ -87,9 +93,16 @@ fn run() -> i32 {
                     println!("Error creating output directory: {}", err);
                     return 1;
                 }
-                if let Err(err) = extract_gz(&fname, &output_directory) {
-                    println!("Error extracting GZ: {}", err);
-                    return 1;
+                if fname.to_str().unwrap().ends_with(".tar.gz") {
+                    if let Err(err) = extract_tgz(&fname,&output_directory) {
+                        println!("Error extracting TGZ: {}", err);
+                        return 1;
+                    }
+                } else {
+                    if let Err(err) = extract_gz(&fname, &output_directory) {
+                        println!("Error extracting GZ: {}", err);
+                        return 1;
+                    }
                 }
             }
             "bz2" => {
@@ -98,9 +111,16 @@ fn run() -> i32 {
                     println!("Error creating output directory: {}", err);
                     return 1;
                 }
-                if let Err(err) = extract_bz2(&fname, &output_directory) {
-                    println!("Error extracting BZ2: {}", err);
-                    return 1;
+                if fname.to_str().unwrap().ends_with(".tar.bz2") {
+                    if let Err(err) = extract_tbz2(&fname,&output_directory) {
+                        println!("Error extracting TBZ2: {}", err);
+                        return 1;
+                    }
+                } else {
+                    if let Err(err) = extract_bz2(&fname, &output_directory) {
+                        println!("Error extracting BZ2: {}", err);
+                        return 1;
+                    }
                 }
             }
             "lzma" => {
@@ -125,25 +145,41 @@ fn run() -> i32 {
                     return 1;
                 }
             }
-            /*
             "tbz2" => {
-                if let Err(err) = extract_tbz2(&fname) {
+                let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+                if let Err(err) = fs::create_dir_all(&output_directory) {
+                    println!("Error creating output directory: {}", err);
+                    return 1;
+                }
+                if let Err(err) = extract_tbz2(&fname,&output_directory) {
                     println!("Error extracting TBZ2: {}", err);
                     return 1;
                 }
             }
             "txz" => {
-                if let Err(err) = extract_txz(&fname) {
+                let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+                if let Err(err) = fs::create_dir_all(&output_directory) {
+                    println!("Error creating output directory: {}", err);
+                    return 1;
+                }
+                if let Err(err) = extract_txz(&fname,&output_directory) {
                     println!("Error extracting TXZ: {}", err);
                     return 1;
                 }
             }
             "tgz" => {
-                if let Err(err) = extract_tgz(&fname) {
+                let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+                if let Err(err) = fs::create_dir_all(&output_directory) {
+                    println!("Error creating output directory: {}", err);
+                    return 1;
+                }
+                if let Err(err) = extract_tgz(&fname,&output_directory) {
                     println!("Error extracting TGZ: {}", err);
                     return 1;
                 }
             }
+            /*
+
             "arj" => {
                 if let Err(err) = extract_arj(&fname) {
                     println!("Error extracting ARJ: {}", err);
