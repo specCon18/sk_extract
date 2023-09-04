@@ -99,7 +99,7 @@ pub fn extract_tar(tar_file: &Path) -> io::Result<()> {
 
     Ok(())
 }
-pub fn extract_xz(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
+pub fn extract_lzma(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
     // Open the input XZ file
     let input_file = File::open(input_path)?;
 
@@ -166,11 +166,15 @@ pub fn extract_bz2(input_path: &Path, output_directory: &Path) -> Result<(), io:
 
     Ok(())
 }
+pub fn extract_7z(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
+
+    sevenz_rust::decompress_file(input_path, output_directory).expect("complete");
+
+    Ok(())
+}
     // pub fn extract_tbz2(){}
     // pub fn extract_tgz(){}
     // pub fn extract_txz(){}
-    // pub fn extract_lzma(){}
-    // pub fn extract_7z(){}
     // pub fn extract_arj(){}
     // pub fn extract_cab(){}
     // pub fn extract_chm(){}
