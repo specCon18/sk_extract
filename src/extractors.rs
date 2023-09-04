@@ -1,10 +1,11 @@
 /*
 TODO_2: implement remaining extractor functions and write tests
 */
-use std::{fs::{self, File}, io::{self, ErrorKind}, path::Path,};
+use std::{fs::{self, File}, io::{self, ErrorKind, Write, Read}, path::Path,};
 use unrar::Archive;
 use lzma::reader::LzmaReader;
 use flate2::read::GzDecoder;
+use bzip2::read::BzDecoder;
 pub fn extract_zip(zip_file: &Path) -> io::Result<()> {
     let file = fs::File::open(zip_file)?;
     let mut archive = zip::ZipArchive::new(file)?;
@@ -136,12 +137,39 @@ pub fn extract_gz(input_path: &Path, output_directory: &Path) -> Result<(), io::
         Err(err) => Err(io::Error::new(ErrorKind::Other, err.to_string())),
     }
 }
-    // pub fn extract_bz2(){}
+pub fn extract_bz2(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
+    // Open the input BZ2 file
+    let input_file = File::open(input_path)?;
+    // Create a BZ2 decompression reader
+    let bz2_reader = BzDecoder::new(input_file);
+
+    // Determine the output file path
+    let output_file_path = output_directory.join(input_path.file_stem().unwrap());
+
+    // Create the output file
+    let mut output_file = File::create(&output_file_path)?;
+
+    // Read from the decompressor and write to the output file
+    let mut buffer = Vec::new();
+    let mut decompressor = io::BufReader::new(bz2_reader);
+
+    loop {
+        let bytes_read = decompressor.read_to_end(&mut buffer)?;
+
+        if bytes_read == 0 {
+            break; // End of file
+        }
+
+        output_file.write_all(&buffer[..bytes_read])?;
+        buffer.clear();
+    }
+
+    Ok(())
+}
     // pub fn extract_tbz2(){}
     // pub fn extract_tgz(){}
     // pub fn extract_txz(){}
     // pub fn extract_lzma(){}
-    // pub fn extract_z(){}
     // pub fn extract_7z(){}
     // pub fn extract_arj(){}
     // pub fn extract_cab(){}

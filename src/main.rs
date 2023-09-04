@@ -18,7 +18,7 @@ use extractors::{
     extract_rar,
     extract_tar,
     extract_xz,
-    // extract_bz2,
+    extract_bz2,
     // extract_tbz2,
     // extract_tgz,
     // extract_txz,
@@ -88,13 +88,14 @@ fn run() -> i32 {
                     return 1;
                 }
             }
-            /*
             "bz2" => {
-                if let Err(err) = extract_bz2(&fname) {
+                let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+                if let Err(err) = extract_bz2(&fname, &output_directory) {
                     println!("Error extracting BZ2: {}", err);
                     return 1;
                 }
             }
+            /*
             "tbz2" => {
                 if let Err(err) = extract_tbz2(&fname) {
                     println!("Error extracting TBZ2: {}", err);
