@@ -28,15 +28,8 @@ pub fn extract_zip(input_path: &Path, output_directory: &Path) -> Result<(), io:
         }
 
         if (*file.name()).ends_with('/') {
-            println!("File {} extracted to \"{}\"", i, full_outpath.display());
             fs::create_dir_all(&full_outpath).unwrap();
         } else {
-            println!(
-                "File {} extracted to \"{}\" ({} bytes)",
-                i,
-                full_outpath.display(),
-                file.size()
-            );
             if let Some(p) = full_outpath.parent() {
                 if !p.exists() {
                     fs::create_dir_all(p).unwrap();
@@ -65,11 +58,6 @@ pub fn extract_rar(input_path: &Path, output_directory: &Path) -> Result<(), Box
             .open_for_processing()
             .unwrap();
     while let Some(header) = archive.read_header()? {
-        println!(
-            "{} bytes: {}",
-            header.entry().unpacked_size,
-            header.entry().filename.to_string_lossy(),
-        );
         // Create the complete output path by combining the output_directory and the filename
         let output_path = output_directory.join(&header.entry().filename);
 

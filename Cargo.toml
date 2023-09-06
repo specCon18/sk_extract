@@ -19,3 +19,12 @@ sevenz-rust = "0.5.2"
 tar = "0.4.40"
 unrar = "0.5.1"
 zip = "0.6.6"
+
+
+[[bin]]
+name = "sk_extract_cli"
+path = "src/main.rs"
+
+[lib]
+name = "sk_extract_lib"
+path = "src/lib/lib.rs"

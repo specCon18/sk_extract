@@ -1,19 +1,6 @@
-/*
-TODO_3: setup rayon to handle parallel file processsing when passed
-more than one file
-*/
-/*
-TODO_1: define supported extensions as structs and write an extensions enum
-*/
-mod extractors;
-// mod extensions;
-// use extenstions::{
-    // File,
-    // Extensions
-// }
 use std::{path::Path, fs};
 use rayon::prelude::*;
-use extractors::{
+use sk_extract_lib::extractors::{
     extract_zip,
     extract_rar,
     extract_tar,
