@@ -1,5 +1,5 @@
 [package]
-name = "extract_rs"
+name = "sk_extract"
 version = "0.1.0"
 edition = "2021"
 
@@ -17,9 +17,9 @@ zip = "0.6.6"
 
 
 [[bin]]
-name = "sk_extract_cli"
+name = "sk_extract"
 path = "src/main.rs"
 
 [lib]
-name = "sk_extract_lib"
+name = "sk_extract"
 path = "src/lib/lib.rs"

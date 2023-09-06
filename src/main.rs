@@ -1,6 +1,6 @@
 use std::{path::Path, fs};
 use rayon::prelude::*;
-use sk_extract_lib::extractors::{
+use sk_extract::extractors::{
     extract_zip,
     extract_rar,
     extract_tar,
