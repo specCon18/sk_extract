@@ -1,0 +1,6 @@
+[book]
+authors = ["specCon18"]
+language = "en"
+multilingual = false
+src = "src"
+title = "sk_extract"

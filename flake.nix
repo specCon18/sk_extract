@@ -21,8 +21,8 @@
           rust-analyzer
           xz
           pkg-config
+          mdbook
         ];
-
       };
     };
 }
