@@ -57,19 +57,34 @@ fn run() -> i32 {
         if let Some(extension) = fname.extension().and_then(|s| s.to_str()) {
             match extension {
                 "zip" => {
-                    if let Err(err) = extract_zip(&fname) {
+                    let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+                    if let Err(err) = fs::create_dir_all(&output_directory) {
+                        println!("Error creating output directory: {}", err);
+                        return 1;
+                    }
+                    if let Err(err) = extract_zip(&fname, &output_directory) {
                         println!("Error extracting ZIP: {}", err);
                         return 1;
                     }
                 }
                 "rar" => {
-                    if let Err(err) = extract_rar(&fname) {
+                    let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+                    if let Err(err) = fs::create_dir_all(&output_directory) {
+                        println!("Error creating output directory: {}", err);
+                        return 1;
+                    }
+                    if let Err(err) = extract_rar(&fname, &output_directory) {
                         println!("Error extracting RAR: {}", err);
                         return 1;
                     }
                 }
                 "tar" => {
-                    if let Err(err) = extract_tar(&fname) {
+                    let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+                    if let Err(err) = fs::create_dir_all(&output_directory) {
+                        println!("Error creating output directory: {}", err);
+                        return 1;
+                    }
+                    if let Err(err) = extract_tar(&fname,&output_directory) {
                         println!("Error extracting TAR: {}", err);
                         return 1;
                     }

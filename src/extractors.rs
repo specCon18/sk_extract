@@ -1,13 +1,13 @@
 /*
 TODO_2: implement remaining extractor functions and write tests
 */
-use std::{fs::{self, File}, io::{self, ErrorKind, Write, Read}, path::Path,};
-use unrar::Archive;
+use std::{fs::{self, File}, error::Error, io::{self, ErrorKind, Write, Read}, path::Path,};
 use lzma::reader::LzmaReader;
 use flate2::read::GzDecoder;
 use bzip2::read::BzDecoder;
-pub fn extract_zip(zip_file: &Path) -> io::Result<()> {
-    let file = fs::File::open(zip_file)?;
+use unrar::Archive;
+pub fn extract_zip(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
+    let file = fs::File::open(input_path)?;
     let mut archive = zip::ZipArchive::new(file)?;
 
     for i in 0..archive.len() {
@@ -17,6 +17,9 @@ pub fn extract_zip(zip_file: &Path) -> io::Result<()> {
             None => continue,
         };
 
+        // Modify the output path to use the specified output_directory
+        let full_outpath = output_directory.join(&outpath);
+
         {
             let comment = file.comment();
             if !comment.is_empty() {
@@ -25,21 +28,21 @@ pub fn extract_zip(zip_file: &Path) -> io::Result<()> {
         }
 
         if (*file.name()).ends_with('/') {
-            println!("File {} extracted to \"{}\"", i, outpath.display());
-            fs::create_dir_all(&outpath).unwrap();
+            println!("File {} extracted to \"{}\"", i, full_outpath.display());
+            fs::create_dir_all(&full_outpath).unwrap();
         } else {
             println!(
                 "File {} extracted to \"{}\" ({} bytes)",
                 i,
-                outpath.display(),
+                full_outpath.display(),
                 file.size()
             );
-            if let Some(p) = outpath.parent() {
+            if let Some(p) = full_outpath.parent() {
                 if !p.exists() {
                     fs::create_dir_all(p).unwrap();
                 }
             }
-            let mut outfile = fs::File::create(&outpath).unwrap();
+            let mut outfile = fs::File::create(&full_outpath).unwrap();
             io::copy(&mut file, &mut outfile).unwrap();
         }
 
@@ -49,7 +52,7 @@ pub fn extract_zip(zip_file: &Path) -> io::Result<()> {
             use std::os::unix::fs::PermissionsExt;
 
             if let Some(mode) = file.unix_mode() {
-                fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
+                fs::set_permissions(&full_outpath, fs::Permissions::from_mode(mode)).unwrap();
             }
         }
     }
@@ -57,35 +60,36 @@ pub fn extract_zip(zip_file: &Path) -> io::Result<()> {
     Ok(())
 }
 
-pub fn extract_rar(rar_file: &Path) -> Result<(), Box<dyn std::error::Error>> {
-    let mut archive = Archive::new(rar_file)
-        .open_for_processing()
-        .unwrap();
-
+pub fn extract_rar(input_path: &Path, output_directory: &Path) -> Result<(), Box<dyn Error>> {
+    let mut archive = Archive::new(input_path)
+            .open_for_processing()
+            .unwrap();
     while let Some(header) = archive.read_header()? {
         println!(
             "{} bytes: {}",
             header.entry().unpacked_size,
             header.entry().filename.to_string_lossy(),
         );
+        // Create the complete output path by combining the output_directory and the filename
+        let output_path = output_directory.join(&header.entry().filename);
+
         archive = if header.entry().is_file() {
-            header.extract()?
+            header.extract_to(&output_path)?
         } else {
             header.skip()?
         };
     }
-
     Ok(())
 }
 
-pub fn extract_tar(tar_file: &Path) -> io::Result<()> {
-    let tar_file = fs::File::open(tar_file)?;
+pub fn extract_tar(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
+    let tar_file = fs::File::open(input_path)?;
     let mut a = tar::Archive::new(tar_file);
 
     for i in a.entries()? {
         let mut i = i?;
         let entry_path = i.header().path()?;
-        let full_path = Path::new("output_directory/").join(entry_path);
+        let full_path = output_directory.join(entry_path);
 
         if i.header().entry_type().is_dir() {
             fs::create_dir_all(&full_path)?;
