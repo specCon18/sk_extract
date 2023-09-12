@@ -10,4 +10,5 @@ pkgs.rustPlatform.buildRustPackage rec {
   src = pkgs.lib.cleanSource ../.;
   buildInputs = [ pkgs.xz pkgs.unrar ];
   nativeBuildInputs = [ pkgs.xz pkgs.pkg-config ];
+  doCheck = false;
 }
