@@ -1,28 +1,20 @@
 {
-  description = "ExtractRS for all you decompression needs";
+  description = "SK Extract";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   };
-  outputs = { self, nixpkgs, ... }@inputs:
+  outputs = { self, nixpkgs }@inputs:
     let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      supportedSystems = [ "x86_64-linux" ];
+      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+      pkgsFor = nixpkgs.legacyPackages;
     in
     {
-      devShells.${system}.rust = pkgs.mkShell{
-        buildInputs = with pkgs; [
-          cargo
-          cargo-watch
-          rustc
-          just
-          rustup
-          clippy
-          lolcat
-          rust-analyzer
-          xz
-          pkg-config
-          mdbook
-        ];
-      };
+      packages = forAllSystems (system: {
+        default = pkgsFor.${system}.callPackage ./nix/default.nix { };
+      });
+      devShells = forAllSystems (system: {
+        default = pkgsFor.${system}.callPackage ./nix/devshell.nix { };
+      });
     };
 }
