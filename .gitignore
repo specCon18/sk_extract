@@ -1,7 +1,6 @@
 /target
 .direnv
 result
-test_data/
 output_directory/
 docs/book/
 # Added by cargo
