@@ -1,14 +1,11 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ pkgs ? import <nixpkgs> { }, lib }:
 
-let
-  manifest = (pkgs.lib.importTOML ../Cargo.toml).package;
-in
 pkgs.rustPlatform.buildRustPackage rec {
-  pname = manifest.name;
-  version = manifest.version;
+  pname = "sk_extract";
+  version = "0.1.0";
   cargoLock.lockFile = ../Cargo.lock;
   src = pkgs.lib.cleanSource ../.;
   buildInputs = [ pkgs.xz pkgs.unrar ];
   nativeBuildInputs = [ pkgs.xz pkgs.pkg-config ];
-  doCheck = false;
+#  doCheck = false;
 }

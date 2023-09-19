@@ -12,6 +12,8 @@ pkgs.mkShell {
     clippy
     rust-analyzer
     xz
+    zip
+    rar
     pkg-config
   ];
 }

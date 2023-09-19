@@ -1,3 +1,7 @@
+use data_encoding::HEXUPPER;
+use ring::digest::{Context, Digest, SHA256};
+use std::{fs::{self, File},io::{BufReader, Read},os::unix::fs::PermissionsExt,path::Path};
+
 pub mod extractors;
 
 #[cfg(test)]
@@ -31,22 +35,38 @@ use extractors::{
     // extract_xar,    
     // extract_exe   
 };
-    // Helper function to create a temporary directory for testing
-    fn create_temp_dir() -> PathBuf {
-        let mut temp_dir = std::env::temp_dir();
-        temp_dir.push("test_dir");
-        fs::create_dir_all(&temp_dir).expect("Failed to create temp directory");
-        temp_dir
-    }
 
-    #[test]
-    fn test_extract_zip() {
-        let input_path = Path::new("test_data/test.zip");
-        let output_directory = create_temp_dir();
+#[test]
+fn test_extract_zip() {
+    let input_path = Path::new("test_data/test.zip");
+    let output_directory = create_temp_dir();
 
-        let result = extract_zip(input_path, &output_directory);
-        assert!(result.is_ok());
+    let result = extract_zip(input_path, &output_directory);
+    assert!(result.is_ok());
+
+    // Calculate SHA-256 digest and get permission flags for extracted files
+    let extracted_files = fs::read_dir(&output_directory).expect("Failed to read extracted directory");
+    for entry in extracted_files {
+        if let Ok(entry) = entry {
+            if entry.path().is_file() {
+                let file = File::open(entry.path()).expect("Failed to open file");
+                let reader = BufReader::new(file);
+                let digest = sha256_digest(reader).expect("Failed to calculate SHA-256 digest");
+                let metadata = entry.metadata().expect("Failed to get file metadata");
+                let permissions = metadata.permissions();
+                let file_mode = permissions.mode();
+                let flags = mode_to_flags(file_mode);
+
+                println!(
+                    "File: {:?}\nSHA-256 Digest: {}\nPermission Flags: {}\n",
+                    entry.path(),
+                    HEXUPPER.encode(digest.as_ref()),
+                    flags
+                );
+            }
+        }
     }
+}
 
     #[test]
     fn test_extract_rar() {
@@ -127,5 +147,67 @@ use extractors::{
 
         let result = extract_txz(input_path, &output_directory);
         assert!(result.is_ok());
+    }
+    // Helper function to create a temporary directory for testing
+    fn create_temp_dir() -> PathBuf {
+        let mut temp_dir = std::env::temp_dir();
+        temp_dir.push("test_dir");
+        fs::create_dir_all(&temp_dir).expect("Failed to create temp directory");
+        temp_dir
+    }
+    
+    fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, std::io::Error> {
+        let mut context = Context::new(&SHA256);
+        let mut buffer = [0; 1024];
+    
+        loop {
+            let count = reader.read(&mut buffer)?;
+            if count == 0 {
+                break;
+            }
+            context.update(&buffer[..count]);
+        }
+    
+        Ok(context.finish())
+    }
+    fn mode_to_chmod(mode: u32) -> u32 {
+        let mut flags:u32 = 0;
+        
+        // Owner permissions
+        if (mode & 0o400) != 0 { flags = flags+400 } else { flags = flags+0 };
+        if (mode & 0o200) != 0 { flags = flags+200 } else { flags = flags+0 };
+        if (mode & 0o100) != 0 { flags = flags+100 } else { flags = flags+0 };
+    
+        // Group permissions
+        if (mode & 0o40) != 0 { flags = flags+40 } else { flags = flags+0 };
+        if (mode & 0o20) != 0 { flags = flags+20 } else { flags = flags+0 };
+        if (mode & 0o10) != 0 { flags = flags+10 } else { flags = flags+0 };
+    
+        // Others permissions
+        if (mode & 0o4) != 0 { flags = flags+4 } else { flags = flags+0 };
+        if (mode & 0o2) != 0 { flags = flags+2 } else { flags = flags+0 };
+        if (mode & 0o1) != 0 { flags = flags+1 } else { flags = flags+0 };
+    
+        flags
+    }
+    fn mode_to_flags(mode: u32) -> String {
+        let mut flags = String::new();
+    
+        // Owner permissions
+        flags.push(if (mode & 0o400) != 0 { 'r' } else { '-' });
+        flags.push(if (mode & 0o200) != 0 { 'w' } else { '-' });
+        flags.push(if (mode & 0o100) != 0 { 'x' } else { '-' });
+    
+        // Group permissions
+        flags.push(if (mode & 0o40) != 0 { 'r' } else { '-' });
+        flags.push(if (mode & 0o20) != 0 { 'w' } else { '-' });
+        flags.push(if (mode & 0o10) != 0 { 'x' } else { '-' });
+    
+        // Others permissions
+        flags.push(if (mode & 0o4) != 0 { 'r' } else { '-' });
+        flags.push(if (mode & 0o2) != 0 { 'w' } else { '-' });
+        flags.push(if (mode & 0o1) != 0 { 'x' } else { '-' });
+    
+        flags
     }
 }
