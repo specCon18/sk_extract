@@ -38,7 +38,7 @@ use extractors::{
 
 #[test]
 fn test_extract_zip() {
-    let input_path = Path::new("test_data/test.zip");
+    let input_path = Path::new("src/test_data/test.zip");
     let output_directory = create_temp_dir();
 
     let result = extract_zip(input_path, &output_directory);
@@ -47,7 +47,7 @@ fn test_extract_zip() {
 
     #[test]
     fn test_extract_rar() {
-        let input_path = Path::new("test_data/test.rar");
+        let input_path = Path::new("src/test_data/test.rar");
         let output_directory = create_temp_dir();
 
         let result = extract_rar(input_path, &output_directory);
