@@ -79,7 +79,7 @@ fn test_extract_zip() {
 
     #[test]
     fn test_extract_tar() {
-        let input_path = Path::new("test_data/test.tar");
+        let input_path = Path::new("src/test_data/test.tar");
         let output_directory = create_temp_dir();
 
         let result = extract_tar(input_path, &output_directory);
@@ -88,7 +88,7 @@ fn test_extract_zip() {
 
     #[test]
     fn test_extract_lzma() {
-        let input_path = Path::new("test_data/test.lzma");
+        let input_path = Path::new("src/test_data/test.lzma");
         let output_directory = create_temp_dir();
 
         let result = extract_lzma(input_path, &output_directory);
@@ -97,7 +97,7 @@ fn test_extract_zip() {
 
     #[test]
     fn test_extract_gz() {
-        let input_path = Path::new("test_data/test.gz");
+        let input_path = Path::new("src/test_data/test.gz");
         let output_directory = create_temp_dir();
 
         let result = extract_gz(input_path, &output_directory);
@@ -106,7 +106,7 @@ fn test_extract_zip() {
 
     #[test]
     fn test_extract_bz2() {
-        let input_path = Path::new("test_data/test.bz2");
+        let input_path = Path::new("src/test_data/test.bz2");
         let output_directory = create_temp_dir();
 
         let result = extract_bz2(input_path, &output_directory);
@@ -115,7 +115,7 @@ fn test_extract_zip() {
 
     #[test]
     fn test_extract_7z() {
-        let input_path = Path::new("test_data/test.7z");
+        let input_path = Path::new("src/test_data/test.7z");
         let output_directory = create_temp_dir();
 
         let result = extract_7z(input_path, &output_directory);
@@ -124,7 +124,7 @@ fn test_extract_zip() {
 
     #[test]
     fn test_extract_tbz2() {
-        let input_path = Path::new("test_data/test.tbz2");
+        let input_path = Path::new("src/test_data/test.tbz2");
         let output_directory = create_temp_dir();
 
         let result = extract_tbz2(input_path, &output_directory);
@@ -133,7 +133,7 @@ fn test_extract_zip() {
 
     #[test]
     fn test_extract_tgz() {
-        let input_path = Path::new("test_data/test.tgz");
+        let input_path = Path::new("src/test_data/test.tgz");
         let output_directory = create_temp_dir();
 
         let result = extract_tgz(input_path, &output_directory);
@@ -142,7 +142,7 @@ fn test_extract_zip() {
 
     #[test]
     fn test_extract_txz() {
-        let input_path = Path::new("test_data/test.txz");
+        let input_path = Path::new("src/test_data/test.txz");
         let output_directory = create_temp_dir();
 
         let result = extract_txz(input_path, &output_directory);
