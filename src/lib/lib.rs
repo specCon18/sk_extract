@@ -36,14 +36,14 @@ use extractors::{
     // extract_exe   
 };
 
-#[test]
-fn test_extract_zip() {
-    let input_path = Path::new("src/test_data/test.zip");
-    let output_directory = create_temp_dir();
+    #[test]
+    fn test_extract_zip() {
+        let input_path = Path::new("src/test_data/test.zip");
+        let output_directory = create_temp_dir();
 
-    let result = extract_zip(input_path, &output_directory);
-    assert!(result.is_ok());
-}
+        let result = extract_zip(input_path, &output_directory);
+        assert!(result.is_ok());
+    }
 
     #[test]
     fn test_extract_rar() {
@@ -125,7 +125,7 @@ fn test_extract_zip() {
         let result = extract_txz(input_path, &output_directory);
         assert!(result.is_ok());
     }
-    // Helper function to create a temporary directory for testing
+
     fn create_temp_dir() -> PathBuf {
         let mut temp_dir = std::env::temp_dir();
         temp_dir.push("test_dir");
@@ -164,26 +164,6 @@ fn test_extract_zip() {
         if (mode & 0o4) != 0 { flags = flags+4 } else { flags = flags+0 };
         if (mode & 0o2) != 0 { flags = flags+2 } else { flags = flags+0 };
         if (mode & 0o1) != 0 { flags = flags+1 } else { flags = flags+0 };
-    
-        flags
-    }
-    fn mode_to_flags(mode: u32) -> String {
-        let mut flags = String::new();
-    
-        // Owner permissions
-        flags.push(if (mode & 0o400) != 0 { 'r' } else { '-' });
-        flags.push(if (mode & 0o200) != 0 { 'w' } else { '-' });
-        flags.push(if (mode & 0o100) != 0 { 'x' } else { '-' });
-    
-        // Group permissions
-        flags.push(if (mode & 0o40) != 0 { 'r' } else { '-' });
-        flags.push(if (mode & 0o20) != 0 { 'w' } else { '-' });
-        flags.push(if (mode & 0o10) != 0 { 'x' } else { '-' });
-    
-        // Others permissions
-        flags.push(if (mode & 0o4) != 0 { 'r' } else { '-' });
-        flags.push(if (mode & 0o2) != 0 { 'w' } else { '-' });
-        flags.push(if (mode & 0o1) != 0 { 'x' } else { '-' });
     
         flags
     }
