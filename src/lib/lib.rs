@@ -43,29 +43,6 @@ fn test_extract_zip() {
 
     let result = extract_zip(input_path, &output_directory);
     assert!(result.is_ok());
-
-    // Calculate SHA-256 digest and get permission flags for extracted files
-    let extracted_files = fs::read_dir(&output_directory).expect("Failed to read extracted directory");
-    for entry in extracted_files {
-        if let Ok(entry) = entry {
-            if entry.path().is_file() {
-                let file = File::open(entry.path()).expect("Failed to open file");
-                let reader = BufReader::new(file);
-                let digest = sha256_digest(reader).expect("Failed to calculate SHA-256 digest");
-                let metadata = entry.metadata().expect("Failed to get file metadata");
-                let permissions = metadata.permissions();
-                let file_mode = permissions.mode();
-                let flags = mode_to_flags(file_mode);
-
-                println!(
-                    "File: {:?}\nSHA-256 Digest: {}\nPermission Flags: {}\n",
-                    entry.path(),
-                    HEXUPPER.encode(digest.as_ref()),
-                    flags
-                );
-            }
-        }
-    }
 }
 
     #[test]
