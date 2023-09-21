@@ -2,6 +2,9 @@ use data_encoding::HEXUPPER;
 use ring::digest::{Context, Digest, SHA256};
 use std::{fs::{self, File},io::{BufReader, Read},os::unix::fs::PermissionsExt,path::Path};
 
+
+
+
 pub mod extractors;
 
 #[cfg(test)]
@@ -10,6 +13,7 @@ mod tests {
     use std::fs;
     use std::path::PathBuf;
     use std::path::Path;
+    use ring::digest::SHA256;
 use extractors::{
     extract_zip,
     extract_rar,
