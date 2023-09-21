@@ -182,9 +182,9 @@ thanks to all of the wonderful library devs listed below that have helped the ea
 - rust-lzma
 - sevenz-rust
 - tar
+- serial_test
 
 ### TODO:
-- fix rust tests to support nix
-- add permission persistance to all filetypes
-- add validity and permissions tests to unit tests
 - add support for the remaining filetypes
+- add windows build support
+- fix failing single file tests
