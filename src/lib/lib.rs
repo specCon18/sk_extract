@@ -1,27 +1,22 @@
-use data_encoding::HEXUPPER;
-use ring::digest::{Context, Digest, SHA256};
-use std::{fs::{self, File},io::{BufReader, Read},os::unix::fs::PermissionsExt,path::Path};
-use serial_test::serial;
 
 pub mod extractors;
 
 #[cfg(test)]
 mod tests {
+    use std::{io,os::unix::fs::PermissionsExt};
+    use serial_test::serial;
     use super::*;
     use std::fs;
     use std::path::PathBuf;
     use std::path::Path;
-    use ring::digest::SHA256;
+    use std::io::Read;
 use extractors::{
     extract_zip,
     extract_rar,
     extract_tar,
-    extract_lzma,
-    extract_bz2,
     extract_tbz2,
     extract_tgz,
     extract_txz,
-    extract_gz,
     extract_7z,
     // extract_arj,
     // extract_cab,
@@ -343,7 +338,7 @@ fn test_extract_txz() {
 }
 
 fn verify_checksum(checksum_path: &str, testfile_path: &str) -> Result<bool, std::io::Error> {
-    let mut checksum_file = File::open(checksum_path).expect("Failed to open checksum file");
+    let mut checksum_file = fs::File::open(checksum_path).expect("Failed to open checksum file");
     let mut checksum_data = String::new();
     checksum_file
         .read_to_string(&mut checksum_data)
@@ -356,9 +351,9 @@ fn verify_checksum(checksum_path: &str, testfile_path: &str) -> Result<bool, std
         eprintln!("String is too short to remove characters");
     }
 
-    let mut testfile = File::open(testfile_path).expect("Failed to open test file");
-    let testfile_buffer = BufReader::new(&mut testfile);
-    let calculated_checksum = HEXUPPER.encode(sha256_digest(testfile_buffer)?.as_ref());
+    let mut testfile = fs::File::open(testfile_path).expect("Failed to open test file");
+    let testfile_buffer = io::BufReader::new(&mut testfile);
+    let calculated_checksum = data_encoding::HEXUPPER.encode(sha256_digest(testfile_buffer)?.as_ref());
     let tf_path = Path::new(testfile_path);
     let mut checksum_with_filename = String::new(); // Initialize the variable
     if let Some(testfile_name) = tf_path.file_name() {
@@ -383,8 +378,8 @@ fn create_temp_dir() -> PathBuf {
     temp_dir.to_path_buf()
 }    
 
-fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, std::io::Error> {
-    let mut context = Context::new(&SHA256);
+fn sha256_digest<R: io::Read>(mut reader: R) -> Result<ring::digest::Digest, std::io::Error> {
+    let mut context = ring::digest::Context::new(&ring::digest::SHA256);
     let mut buffer = [0; 1024];
 
     loop {
@@ -418,7 +413,7 @@ fn mode_to_chmod(mode: u32) -> u32 {
     flags
 }
 fn check_permissions(filepath: &str, perms: u32) -> Result<bool, std::io::Error> {
-    let file = File::open(filepath)?;
+    let file = fs::File::open(filepath)?;
     let metadata = file.metadata()?;
     let permissions = metadata.permissions();
     let mode = permissions.mode();
