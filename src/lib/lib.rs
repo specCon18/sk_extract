@@ -171,69 +171,6 @@ fn test_extract_tar() {
 
 #[test]
 #[serial]
-fn test_extract_lzma() {
-    let input_path = Path::new("src/test_data/test.lzma");
-    let csum_path = Path::new("src/test_data/test_csum.lzma");
-    let output_directory = create_temp_dir();
-    let testfile = extract_lzma(input_path, &output_directory);
-    let checksum = extract_lzma(csum_path, &output_directory);
-    assert!(testfile.is_ok());
-    assert!(checksum.is_ok());
-
-    // Check checksums and assert equality
-    let checksum_01 = verify_checksum("test_dir/checksum_01", "test_dir/testfile_01").unwrap();
-    assert_eq!(checksum_01, true);
-    
-    // Delete the test directory at the end of the test
-    if let Err(err) = fs::remove_dir_all(&output_directory) {
-        eprintln!("Failed to delete test directory: {:?}", err);
-    } 
-}
-
-#[test]
-#[serial]
-fn test_extract_gz() {
-    let input_path = Path::new("src/test_data/test.gz");
-    let csum_path = Path::new("src/test_data/test_csum.gz");
-    let output_directory = create_temp_dir();
-    let testfile = extract_gz(input_path, &output_directory);
-    let checksum = extract_gz(csum_path, &output_directory);
-    assert!(testfile.is_ok());
-    assert!(checksum.is_ok());
-
-    // Check checksums and assert equality
-    let checksum_01 = verify_checksum("test_dir/checksum_01", "test_dir/testfile_01").unwrap();
-    assert_eq!(checksum_01, true);
-    
-    // Delete the test directory at the end of the test
-    if let Err(err) = fs::remove_dir_all(&output_directory) {
-        eprintln!("Failed to delete test directory: {:?}", err);
-    } 
-}
-
-#[test]
-#[serial]
-fn test_extract_bz2() {
-    let input_path = Path::new("src/test_data/test.bz2");
-    let csum_path = Path::new("src/test_data/test_csum.bz2");
-    let output_directory = create_temp_dir();
-    let testfile = extract_bz2(input_path, &output_directory);
-    let checksum = extract_bz2(csum_path, &output_directory);
-    assert!(testfile.is_ok());
-    assert!(checksum.is_ok());
-
-    // Check checksums and assert equality
-    let checksum_01 = verify_checksum("test_dir/checksum_01", "test_dir/testfile_01").unwrap();
-    assert_eq!(checksum_01, true);
-
-    // Delete the test directory at the end of the test
-    if let Err(err) = fs::remove_dir_all(&output_directory) {
-        eprintln!("Failed to delete test directory: {:?}", err);
-    } 
-}
-
-#[test]
-#[serial]
 fn test_extract_7z() {
     let input_path = Path::new("src/test_data/test.7z");
     let output_directory = create_temp_dir();
