@@ -50,17 +50,10 @@ fn test_extract_zip() {
     let checksum_02 = verify_checksum("src/test_data/checksum_02", "src/test_data/testfile_02").unwrap();
     let checksum_03 = verify_checksum("src/test_data/checksum_03", "src/test_data/testfile_03").unwrap();
 
-    println!("Checksum 01: {:?}", checksum_01);
-    println!("Checksum 02: {:?}", checksum_02);
-    println!("Checksum 03: {:?}", checksum_03);
-
     assert_eq!(checksum_01, true);
     assert_eq!(checksum_02, true);
     assert_eq!(checksum_03, true);
 }
-
-
-
 
     #[test]
     fn test_extract_rar() {
@@ -163,14 +156,12 @@ fn test_extract_zip() {
         if checksum_data_uppercase.len() >= 2 {
             checksum_data_uppercase.truncate(checksum_data_uppercase.len() - 1);
         } else {
-            // Handle cases where the string is too short to remove characters
-            println!("String is too short to remove characters");
+            eprintln!("String is too short to remove characters");
         }
-        println!("Checksum file data: {:?}", checksum_data_uppercase);
 
         let mut testfile = File::open(testfile_path).expect("Failed to open test file");
         let testfile_buffer = BufReader::new(&mut testfile);
-        let calculated_checksum = HEXUPPER.encode(sha256_digest(testfile_buffer, testfile_path)?.as_ref());
+        let calculated_checksum = HEXUPPER.encode(sha256_digest(testfile_buffer)?.as_ref());
         let tf_path = Path::new(testfile_path);
         let mut checksum_with_filename = String::new(); // Initialize the variable
         if let Some(testfile_name) = tf_path.file_name() {
@@ -178,9 +169,8 @@ fn test_extract_zip() {
                 checksum_with_filename = format!("{}  {}", calculated_checksum, testfile_name_str.to_uppercase());
             }
         } else {
-            println!("Invalid path or no file name found.");
+            eprintln!("Invalid path or no file name found.");
         }
-        println!("Calculated Checksum: {:?}", checksum_with_filename);
 
         Ok(checksum_with_filename == checksum_data_uppercase)
     }
@@ -192,7 +182,7 @@ fn test_extract_zip() {
         temp_dir
     }
     
-    fn sha256_digest<R: Read>(mut reader: R, filename: &str) -> Result<Digest, std::io::Error> {
+    fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, std::io::Error> {
         let mut context = Context::new(&SHA256);
         let mut buffer = [0; 1024];
     
