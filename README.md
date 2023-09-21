@@ -192,8 +192,8 @@ use sk_extract::extractors::{
                 }
 ```
 # Credits
-thanks to all of the wonderful library devs listed below that have helped the early bootstrapping of this project:
-- unrar
+Thanks to all of the wonderful library devs listed below that have helped the early bootstrapping of this project:
+- unrar.rs
 - zip
 - bzip2
 - flate2
@@ -202,6 +202,9 @@ thanks to all of the wonderful library devs listed below that have helped the ea
 - sevenz-rust
 - tar
 - serial_test
+Thanks to the dood sky who helped me with the nixery!
 
+# LICENSE:
+This software is licensed under the MIT License except for any code that directly interacts with unrar which falls under [it's gross license](./rar_license.txt)
 ### TODO:
 - add support for the remaining filetypes
