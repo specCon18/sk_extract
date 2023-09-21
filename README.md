@@ -187,4 +187,3 @@ thanks to all of the wonderful library devs listed below that have helped the ea
 ### TODO:
 - add support for the remaining filetypes
 - add windows build support
-- fix failing single file tests
