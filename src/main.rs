@@ -44,6 +44,7 @@ fn run() -> i32 {
         if let Some(extension) = fname.extension().and_then(|s| s.to_str()) {
             match extension {
                 "zip" => {
+                    //Extract Files from a ZIP archive
                     let output_directory = Path::new("output_directory"); // Change this to your desired output directory
                     if let Err(err) = fs::create_dir_all(&output_directory) {
                         println!("Error creating output directory: {}", err);
