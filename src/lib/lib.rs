@@ -43,6 +43,7 @@ use extractors::{
     fn test_extract_zip() {
         let input_path = Path::new("src/test_data/test.zip");
         let output_directory = create_temp_dir();
+        let perms = 644;
     
         // Extract the zip file
         let result = extract_zip(input_path, &output_directory);
@@ -52,10 +53,93 @@ use extractors::{
         let checksum_01 = verify_checksum("test_dir/checksum_01", "test_dir/testfile_01").unwrap();
         let checksum_02 = verify_checksum("test_dir/checksum_02", "test_dir/testfile_02").unwrap();
         let checksum_03 = verify_checksum("test_dir/checksum_03", "test_dir/testfile_03").unwrap();
-    
+
         assert_eq!(checksum_01, true);
         assert_eq!(checksum_02, true);
         assert_eq!(checksum_03, true);
+
+        // Check Permissions match original 644 compression perms
+
+        let tf1 = File::open("test_dir/testfile_01").expect("Failed to open test file");
+        let tf1_metadata = tf1.metadata();
+        let tf1_permissions = tf1_metadata.expect("Failed to open test file").permissions();
+        let tf1_mode = tf1_permissions.mode();
+        let tf1_chmod = mode_to_chmod(tf1_mode);
+        let tf1_perms_eq;
+        if tf1_chmod == perms {
+            tf1_perms_eq = true;
+        } else {
+            tf1_perms_eq = false;
+        }
+
+        let tf2 = File::open("test_dir/testfile_02").expect("Failed to open test file");
+        let tf2_metadata = tf2.metadata();
+        let tf2_permissions = tf2_metadata.expect("Failed to open test file").permissions();
+        let tf2_mode = tf2_permissions.mode();
+        let tf2_chmod = mode_to_chmod(tf2_mode);
+        let tf2_perms_eq;
+        if tf2_chmod == perms {
+            tf2_perms_eq = true;
+        } else {
+            tf2_perms_eq = false;
+        }
+
+        let tf3 = File::open("test_dir/testfile_01").expect("Failed to open test file");
+        let tf3_metadata = tf3.metadata();
+        let tf3_permissions = tf3_metadata.expect("Failed to open test file").permissions();
+        let tf3_mode = tf3_permissions.mode();
+        let tf3_chmod = mode_to_chmod(tf3_mode);
+        let tf3_perms_eq;
+        if tf3_chmod == perms {
+            tf3_perms_eq = true;
+        } else {
+            tf3_perms_eq = false;
+        }
+        
+        let csum1 = File::open("test_dir/checksum_01").expect("Failed to open test file");
+        let csum1_metadata = csum1.metadata();
+        let csum1_permissions = csum1_metadata.expect("Failed to open test file").permissions();
+        let csum1_mode = csum1_permissions.mode();
+        let csum1_chmod = mode_to_chmod(csum1_mode);
+        let csum1_perms_eq;
+        if csum1_chmod == perms {
+            csum1_perms_eq = true;
+        } else {
+            csum1_perms_eq = false;
+        }
+
+        let csum2 = File::open("test_dir/checksum_02").expect("Failed to open test file");
+        let csum2_metadata = csum2.metadata();
+        let csum2_permissions = csum2_metadata.expect("Failed to open test file").permissions();
+        let csum2_mode = csum2_permissions.mode();
+        let csum2_chmod = mode_to_chmod(csum2_mode);
+        let csum2_perms_eq;
+        if csum2_chmod == perms {
+            csum2_perms_eq = true;
+        } else {
+            csum2_perms_eq = false;
+        }
+
+        let csum3 = File::open("test_dir/checksum_03").expect("Failed to open test file");
+        let csum3_metadata = csum3.metadata();
+        let csum3_permissions = csum3_metadata.expect("Failed to open test file").permissions();
+        let csum3_mode = csum3_permissions.mode();
+        let csum3_chmod = mode_to_chmod(csum3_mode);
+        let csum3_perms_eq;
+        if csum3_chmod == perms {
+            csum3_perms_eq = true;
+        } else {
+            csum3_perms_eq = false;
+        }
+
+        let perms_eq;
+        if csum1_perms_eq == true && csum2_perms_eq == true && csum3_perms_eq == true && tf1_perms_eq == true && tf2_perms_eq == true && tf3_perms_eq == true {
+            perms_eq = true;
+        } else {
+            perms_eq = false;
+        }
+        
+        assert_eq!(perms_eq,true);
         
         // Delete the test directory at the end of the test
         if let Err(err) = fs::remove_dir_all(&output_directory) {
@@ -76,11 +160,8 @@ use extractors::{
         let checksum_02 = verify_checksum("test_dir/checksum_02", "test_dir/testfile_02").unwrap();
         let checksum_03 = verify_checksum("test_dir/checksum_03", "test_dir/testfile_03").unwrap();
 
-        println!["{}", checksum_01];
         assert_eq!(checksum_01, true);
-        println!["{}", checksum_02];
         assert_eq!(checksum_02, true);
-        println!["{}", checksum_03];
         assert_eq!(checksum_03, true);
         
         // Delete the test directory at the end of the test
@@ -102,11 +183,8 @@ use extractors::{
         let checksum_02 = verify_checksum("test_dir/checksum_02", "test_dir/testfile_02").unwrap();
         let checksum_03 = verify_checksum("test_dir/checksum_03", "test_dir/testfile_03").unwrap();
 
-        println!["{}", checksum_01];
         assert_eq!(checksum_01, true);
-        println!["{}", checksum_02];
         assert_eq!(checksum_02, true);
-        println!["{}", checksum_03];
         assert_eq!(checksum_03, true);
         
         // Delete the test directory at the end of the test
@@ -331,7 +409,6 @@ use extractors::{
     
         Ok(context.finish())
     }
-    
     fn mode_to_chmod(mode: u32) -> u32 {
         let mut flags:u32 = 0;
         
