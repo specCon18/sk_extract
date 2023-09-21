@@ -2,9 +2,28 @@
 Interface for developers and users to interact with many common archive formats.
 
 # Installation
-install with:
+### install with Cargo:
 ```shell
-  cargo install sk_extract
+  cargo build --release
+```
+### Install with nix:
+add the flake
+call the module
+
+### Install with windows
+- Install git
+- Install vcpkg
+```powershell
+    git clone https://github.com/microsoft/vcpkg.git
+    .\bootstrap-vcpkg.bat
+```
+- Install liblzma via vcpkg
+```powershell
+    vcpkg install liblzma:x64-windows-static-md
+```
+- Build using:
+```powershell
+    cargo build --release
 ```
 # Examples
 to use the cli run sk_extract [ARCHIVES]
@@ -186,4 +205,3 @@ thanks to all of the wonderful library devs listed below that have helped the ea
 
 ### TODO:
 - add support for the remaining filetypes
-- add windows build support
