@@ -63,60 +63,96 @@ fn test_extract_zip() {
     fn test_extract_rar() {
         let input_path = Path::new("src/test_data/test.rar");
         let output_directory = create_temp_dir();
-        //get the text in checksum_01,checksum_02,checksum_03 and compare to the hashes of testfile_01 testfile_02 and testfile_03
-        //assert equality
         let result = extract_rar(input_path, &output_directory);
         assert!(result.is_ok());
+        
+        // Check checksums and assert equality
+        let checksum_01 = verify_checksum("src/test_data/checksum_01", "src/test_data/testfile_01").unwrap();
+        let checksum_02 = verify_checksum("src/test_data/checksum_02", "src/test_data/testfile_02").unwrap();
+        let checksum_03 = verify_checksum("src/test_data/checksum_03", "src/test_data/testfile_03").unwrap();
+
+        assert_eq!(checksum_01, true);
+        assert_eq!(checksum_02, true);
+        assert_eq!(checksum_03, true);
     }
 
     #[test]
     fn test_extract_tar() {
         let input_path = Path::new("src/test_data/test.tar");
         let output_directory = create_temp_dir();
-        //get the text in checksum_01,checksum_02,checksum_03 and compare to the hashes of testfile_01 testfile_02 and testfile_03
-        //assert equality
         let result = extract_tar(input_path, &output_directory);
         assert!(result.is_ok());
+        
+        // Check checksums and assert equality
+        let checksum_01 = verify_checksum("src/test_data/checksum_01", "src/test_data/testfile_01").unwrap();
+        let checksum_02 = verify_checksum("src/test_data/checksum_02", "src/test_data/testfile_02").unwrap();
+        let checksum_03 = verify_checksum("src/test_data/checksum_03", "src/test_data/testfile_03").unwrap();
+
+        assert_eq!(checksum_01, true);
+        assert_eq!(checksum_02, true);
+        assert_eq!(checksum_03, true);
     }
 
     #[test]
     fn test_extract_lzma() {
         let input_path = Path::new("src/test_data/test.lzma");
+        let csum_path = Path::new("src/test_data/test_csum.lzma");
         let output_directory = create_temp_dir();
-        //get the text in checksum_01 and compare to the hashes of testfile_01
-        //assert equality
-        let result = extract_lzma(input_path, &output_directory);
-        assert!(result.is_ok());
+        let testfile = extract_lzma(input_path, &output_directory);
+        let checksum = extract_lzma(csum_path, &output_directory);
+        assert!(testfile.is_ok());
+        assert!(checksum.is_ok());
+
+        // Check checksums and assert equality
+        let checksum_01 = verify_checksum("src/test_data/checksum_01", "src/test_data/testfile_01").unwrap();
+        assert_eq!(checksum_01, true);
     }
 
     #[test]
     fn test_extract_gz() {
         let input_path = Path::new("src/test_data/test.gz");
+        let csum_path = Path::new("src/test_data/test_csum.gz");
         let output_directory = create_temp_dir();
-        //get the text in checksum_01 and compare to the hashes of testfile_01
-        //assert equality
-        let result = extract_gz(input_path, &output_directory);
-        assert!(result.is_ok());
+        let testfile = extract_gz(input_path, &output_directory);
+        let checksum = extract_gz(csum_path, &output_directory);
+        assert!(testfile.is_ok());
+        assert!(checksum.is_ok());
+
+        // Check checksums and assert equality
+        let checksum_01 = verify_checksum("src/test_data/checksum_01", "src/test_data/testfile_01").unwrap();
+        assert_eq!(checksum_01, true);
     }
 
     #[test]
     fn test_extract_bz2() {
         let input_path = Path::new("src/test_data/test.bz2");
+        let csum_path = Path::new("src/test_data/test_csum.bz2");
         let output_directory = create_temp_dir();
-        //get the text in checksum_01 and compare to the hashes of testfile_01
-        //assert equality
-        let result = extract_bz2(input_path, &output_directory);
-        assert!(result.is_ok());
+        let testfile = extract_bz2(input_path, &output_directory);
+        let checksum = extract_bz2(csum_path, &output_directory);
+        assert!(testfile.is_ok());
+        assert!(checksum.is_ok());
+
+        // Check checksums and assert equality
+        let checksum_01 = verify_checksum("src/test_data/checksum_01", "src/test_data/testfile_01").unwrap();
+        assert_eq!(checksum_01, true);
     }
 
     #[test]
     fn test_extract_7z() {
         let input_path = Path::new("src/test_data/test.7z");
         let output_directory = create_temp_dir();
-        //get the text in checksum_01,checksum_02,checksum_03 and compare to the hashes of testfile_01 testfile_02 and testfile_03
-        //assert equality
         let result = extract_7z(input_path, &output_directory);
         assert!(result.is_ok());
+        
+        // Check checksums and assert equality
+        let checksum_01 = verify_checksum("src/test_data/checksum_01", "src/test_data/testfile_01").unwrap();
+        let checksum_02 = verify_checksum("src/test_data/checksum_02", "src/test_data/testfile_02").unwrap();
+        let checksum_03 = verify_checksum("src/test_data/checksum_03", "src/test_data/testfile_03").unwrap();
+
+        assert_eq!(checksum_01, true);
+        assert_eq!(checksum_02, true);
+        assert_eq!(checksum_03, true);
     }
 
     #[test]
@@ -127,6 +163,15 @@ fn test_extract_zip() {
         //assert equality
         let result = extract_tbz2(input_path, &output_directory);
         assert!(result.is_ok());
+
+        // Check checksums and assert equality
+        let checksum_01 = verify_checksum("src/test_data/checksum_01", "src/test_data/testfile_01").unwrap();
+        let checksum_02 = verify_checksum("src/test_data/checksum_02", "src/test_data/testfile_02").unwrap();
+        let checksum_03 = verify_checksum("src/test_data/checksum_03", "src/test_data/testfile_03").unwrap();
+
+        assert_eq!(checksum_01, true);
+        assert_eq!(checksum_02, true);
+        assert_eq!(checksum_03, true);
     }
 
     #[test]
@@ -137,6 +182,15 @@ fn test_extract_zip() {
         //assert equality
         let result = extract_tgz(input_path, &output_directory);
         assert!(result.is_ok());
+
+        // Check checksums and assert equality
+        let checksum_01 = verify_checksum("src/test_data/checksum_01", "src/test_data/testfile_01").unwrap();
+        let checksum_02 = verify_checksum("src/test_data/checksum_02", "src/test_data/testfile_02").unwrap();
+        let checksum_03 = verify_checksum("src/test_data/checksum_03", "src/test_data/testfile_03").unwrap();
+
+        assert_eq!(checksum_01, true);
+        assert_eq!(checksum_02, true);
+        assert_eq!(checksum_03, true);
     }
 
     #[test]
@@ -147,6 +201,15 @@ fn test_extract_zip() {
         //assert equality
         let result = extract_txz(input_path, &output_directory);
         assert!(result.is_ok());
+        
+        // Check checksums and assert equality
+        let checksum_01 = verify_checksum("src/test_data/checksum_01", "src/test_data/testfile_01").unwrap();
+        let checksum_02 = verify_checksum("src/test_data/checksum_02", "src/test_data/testfile_02").unwrap();
+        let checksum_03 = verify_checksum("src/test_data/checksum_03", "src/test_data/testfile_03").unwrap();
+
+        assert_eq!(checksum_01, true);
+        assert_eq!(checksum_02, true);
+        assert_eq!(checksum_03, true);
     }
     
     fn verify_checksum(checksum_path: &str, testfile_path: &str) -> Result<bool, std::io::Error> {
