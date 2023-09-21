@@ -43,20 +43,25 @@ use extractors::{
 #[test]
 fn test_extract_zip() {
     let input_path = Path::new("src/test_data/test.zip");
-    let output_directory = create_temp_dir();
+    let output_directory = create_permanent_dir();
 
     // Extract the zip file
     let result = extract_zip(input_path, &output_directory);
     assert!(result.is_ok());
 
     // Check checksums and assert equality
-    let checksum_01 = verify_checksum("src/test_data/checksum_01", "src/test_data/testfile_01").unwrap();
-    let checksum_02 = verify_checksum("src/test_data/checksum_02", "src/test_data/testfile_02").unwrap();
-    let checksum_03 = verify_checksum("src/test_data/checksum_03", "src/test_data/testfile_03").unwrap();
+    let checksum_01 = verify_checksum("test_dir/checksum_01", "test_dir/testfile_01").unwrap();
+    let checksum_02 = verify_checksum("test_dir/checksum_02", "test_dir/testfile_02").unwrap();
+    let checksum_03 = verify_checksum("test_dir/checksum_03", "test_dir/testfile_03").unwrap();
 
     assert_eq!(checksum_01, true);
     assert_eq!(checksum_02, true);
     assert_eq!(checksum_03, true);
+    
+    // Delete the test directory at the end of the test
+    if let Err(err) = fs::remove_dir_all(&output_directory) {
+        eprintln!("Failed to delete test directory: {:?}", err);
+    } 
 }
 
     #[test]
@@ -248,7 +253,17 @@ fn test_extract_zip() {
         fs::create_dir_all(&temp_dir).expect("Failed to create temp directory");
         temp_dir
     }
-    
+fn create_permanent_dir() -> PathBuf {
+    // Specify the absolute path for the permanent directory
+    let permanent_dir = Path::new("test_dir");
+
+    // Create the directory if it doesn't exist
+    if !permanent_dir.exists() {
+        fs::create_dir_all(&permanent_dir).expect("Failed to create permanent directory");
+    }
+
+    permanent_dir.to_path_buf()
+}    
     fn sha256_digest<R: Read>(mut reader: R) -> Result<Digest, std::io::Error> {
         let mut context = Context::new(&SHA256);
         let mut buffer = [0; 1024];
