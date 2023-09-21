@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["extract_7z","extract_bz2","extract_gz","extract_lzma","extract_rar","extract_tar","extract_tbz2","extract_tgz","extract_txz","extract_zip"]};

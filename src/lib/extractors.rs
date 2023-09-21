@@ -1,12 +1,27 @@
-/*
-TODO_2: implement remaining extractor functions and write tests
-*/
 use std::{fs::{self, File}, error::Error, io::{self, ErrorKind, Write, Read}, path::Path,};
 use lzma::reader::LzmaReader;
 use flate2::read::GzDecoder;
 use bzip2::read::BzDecoder;
 use unrar::Archive;
 
+/// Extracts files from a ZIP archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the ZIP file to extract.
+/// * `output_directory` - The destination directory for extracted files.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success, or an `Error` if extraction fails.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_zip(Path::new("src/test_data/test.zip"), Path::new("output_directory"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_zip(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
     let file = fs::File::open(input_path)?;
     let mut archive = zip::ZipArchive::new(file)?;
@@ -48,6 +63,24 @@ pub fn extract_zip(input_path: &Path, output_directory: &Path) -> Result<(), io:
     Ok(())
 }
 
+/// Extracts files from a RAR archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the RAR file to extract.
+/// * `output_directory` - The destination directory for extracted files.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success, or an `Error` if extraction fails.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_rar(Path::new("src/test_data/test.rar"), Path::new("output_directory"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_rar(input_path: &Path, output_directory: &Path) -> Result<(), Box<dyn Error>> {
     let mut archive = Archive::new(input_path)
             .open_for_processing()
@@ -63,6 +96,24 @@ pub fn extract_rar(input_path: &Path, output_directory: &Path) -> Result<(), Box
     Ok(())
 }
 
+/// Extracts files from a TAR archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the TAR file to extract.
+/// * `output_directory` - The destination directory for extracted files.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success, or an `Error` if extraction fails.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_tar(Path::new("src/test_data/test.tar"), Path::new("output_directory"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_tar(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
     let tar_file = fs::File::open(input_path)?;
     let mut a = tar::Archive::new(tar_file);
@@ -85,6 +136,24 @@ pub fn extract_tar(input_path: &Path, output_directory: &Path) -> Result<(), io:
     Ok(())
 }
 
+/// Extracts files from an LZMA compressed archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the LZMA compressed file to extract.
+/// * `output_directory` - The destination directory for extracted files.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success, or an `Error` if extraction fails.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_lzma(Path::new("src/test_data/test.lzma"), Path::new("output_directory"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_lzma(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
     let input_file = File::open(input_path)?;
     let mut decompressor = LzmaReader::new_decompressor(input_file)
@@ -95,6 +164,24 @@ pub fn extract_lzma(input_path: &Path, output_directory: &Path) -> Result<(), io
     Ok(())
 }
 
+/// Extracts files from a GZ (gzip) compressed archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the GZ compressed file to extract.
+/// * `output_directory` - The destination directory for extracted files.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success, or an `Error` if extraction fails.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_gz(Path::new("src/test_data/test.gz"), Path::new("output_directory"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_gz(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
     let input_file = File::open(input_path)?;
     let mut decompressor = GzDecoder::new(input_file);
@@ -106,6 +193,24 @@ pub fn extract_gz(input_path: &Path, output_directory: &Path) -> Result<(), io::
     }
 }
 
+/// Extracts files from a BZ2 (bzip2) compressed archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the BZ2 compressed file to extract.
+/// * `output_directory` - The destination directory for extracted files.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success, or an `Error` if extraction fails.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_bz2(Path::new("src/test_data/test.bz2"), Path::new("output_directory"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_bz2(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
     let input_file = File::open(input_path)?;
     let bz2_reader = BzDecoder::new(input_file);
@@ -124,10 +229,48 @@ pub fn extract_bz2(input_path: &Path, output_directory: &Path) -> Result<(), io:
 
     Ok(())
 }
+
+/// Extracts files from a 7Z archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the 7Z file to extract.
+/// * `output_directory` - The destination directory for extracted files.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success, or an `Error` if extraction fails.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_7z(Path::new("src/test_data/test.7z"), Path::new("output_directory"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_7z(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
     sevenz_rust::decompress_file(input_path, output_directory).expect("complete");
     Ok(())
 }
+
+/// Extracts files from a TBZ2 (tar.bz2) compressed archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the TBZ2 compressed file to extract.
+/// * `output_directory` - The destination directory for extracted files.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success, or an `Error` if extraction fails.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_tbz2(Path::new("src/test_data/test.tbz2"), Path::new("output_directory"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_tbz2(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
     let input_file = File::open(input_path)?;
     let bz2_reader = BzDecoder::new(input_file);
@@ -148,6 +291,25 @@ pub fn extract_tbz2(input_path: &Path, output_directory: &Path) -> Result<(), io
     Ok(())
 }
 
+
+/// Extracts files from a TGZ (tar.gz) compressed archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the TGZ compressed file to extract.
+/// * `output_directory` - The destination directory for extracted files.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success, or an `Error` if extraction fails.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_tgz(Path::new("src/test_data/test.tgz"), Path::new("output_directory"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_tgz(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
     let input_file = File::open(input_path)?;
     let mut decompressor = GzDecoder::new(input_file);
@@ -167,6 +329,24 @@ pub fn extract_tgz(input_path: &Path, output_directory: &Path) -> Result<(), io:
     Ok(())
 }
 
+/// Extracts files from a TXZ (tar.xz) compressed archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the TXZ compressed file to extract.
+/// * `output_directory` - The destination directory for extracted files.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success, or an `Error` if extraction fails.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_txz(Path::new("src/test_data/test.txz"), Path::new("output_directory"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_txz(input_path: &Path, output_directory: &Path) -> Result<(), io::Error> {
     let input_file = File::open(input_path)?;
     let mut decompressor = LzmaReader::new_decompressor(input_file)
@@ -186,17 +366,3 @@ pub fn extract_txz(input_path: &Path, output_directory: &Path) -> Result<(), io:
     }
     Ok(())
 }
-
-    // pub fn extract_arj(){}
-    // pub fn extract_cab(){}
-    // pub fn extract_chm(){}
-    // pub fn extract_deb(){}
-    // pub fn extract_dmg(){}
-    // pub fn extract_iso(){}
-    // pub fn extract_lzh(){}
-    // pub fn extract_msi(){}
-    // pub fn extract_rpm(){}
-    // pub fn extract_udf(){}
-    // pub fn extract_wim(){}
-    // pub fn extract_xar(){}
-    // pub fn extract_exe(){}
