@@ -3,6 +3,7 @@ use lzma::reader::LzmaReader;
 use flate2::read::GzDecoder;
 use bzip2::read::BzDecoder;
 use unrar::Archive;
+use ar;
 
 /// Extracts files from a ZIP archive.
 ///
@@ -363,6 +364,24 @@ pub fn extract_txz(input_path: &Path, output_directory: &Path) -> Result<(), io:
             let mut file = fs::File::create(&full_path)?;
             io::copy(&mut entry, &mut file)?;
         }
+    }
+    Ok(())
+}
+
+pub fn extract_deb(input_path: &Path,) -> Result<(),io::Error>{
+    let input_file =File::open(&input_path).unwrap();
+    // Read an archive from the file foo.a:
+    let mut archive = ar::Archive::new(&input_file);
+    // Iterate over all entries in the archive:
+    while let Some(entry_result) = archive.next_entry() {
+        let mut entry = entry_result.unwrap();
+        // Create a new file with the same name as the archive entry:
+        let mut file = File::create(
+            str::from_utf8(entry.header().identifier()).unwrap(),
+        ).unwrap();
+        // The Entry object also acts as an io::Read, so we can easily copy the
+        // contents of the archive entry into the file:
+        io::copy(&mut entry, &mut file).unwrap();
     }
     Ok(())
 }

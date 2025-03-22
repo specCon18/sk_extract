@@ -14,7 +14,7 @@ use sk_extract::extractors::{
     // extract_arj,
     // extract_cab,
     // extract_chm,
-    // extract_deb,
+    extract_deb,
     // extract_dmg,
     // extract_iso,
     // extract_lzh,
@@ -186,6 +186,17 @@ fn run() -> i32 {
                         return 1;
                     }
                 }
+                "deb" => {
+                    let output_directory = Path::new("output_directory"); // Change this to your desired output directory
+                    if let Err(err) = fs::create_dir_all(&output_directory) {
+                        println!("Error creating output directory: {}", err);
+                        return 1;
+                    }
+                    if let Err(err) = extract_deb(&fname) {
+                        println!("Error extracting DEB: {}", err);
+                        return 1;
+                    }
+                }
                 /*
 
                 "arj" => {
@@ -206,12 +217,7 @@ fn run() -> i32 {
                         return 1;
                     }
                 }
-                "deb" => {
-                    if let Err(err) = extract_deb(&fname) {
-                        println!("Error extracting DEB: {}", err);
-                        return 1;
-                    }
-                }
+                
                 "dmg" => {
                     if let Err(err) = extract_dmg(&fname) {
                         println!("Error extracting DMG: {}", err);
