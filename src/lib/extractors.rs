@@ -5,6 +5,8 @@ use bzip2::read::BzDecoder;
 use unrar::Archive;
 use ar;
 
+
+//TODO: P:1 refactor and extract like code
 /// Extracts files from a ZIP archive.
 ///
 /// # Arguments
@@ -367,7 +369,24 @@ pub fn extract_txz(input_path: &Path, output_directory: &Path) -> Result<(), io:
     }
     Ok(())
 }
-
+//TODO: P:5 add cargo doc
+/// Extracts files from a DEB (.deb) compressed archive.
+///
+/// # Arguments
+///
+/// * `input_path` - The path to the DEB compressed file to extract.
+///
+/// # Returns
+///
+/// Returns `Ok(())` on success.
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// let result = extract_deb(Path::new("src/test_data/test.deb"));
+/// assert!(result.is_ok());
+/// ```
 pub fn extract_deb(input_path: &Path,) -> Result<(),io::Error>{
     let input_file =File::open(&input_path).unwrap();
     // Read an archive from the file foo.a:
