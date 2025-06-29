@@ -3,18 +3,22 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   };
-  outputs = { self, nixpkgs }@inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+    }@inputs:
     let
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
-      #v I improved how you call in packages
-      pkgs = forAllSystems (system:
+      # I improved how you call in packages
+      pkgs = forAllSystems (
+        system:
         import nixpkgs {
           inherit system;
           #v this can be adjusted to read args passed without impure later
-          config = { allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
-             "unrar"
-           ];
+          config = {
+            allowUnfree = true;
           };
         }
       );
@@ -27,7 +31,7 @@
         default = pkgs.${system}.callPackage ./nix/devshell.nix { };
       });
       nixConfig = {
-        #v I would have like this to work but it requires the nix user to set an option.
+        # I would have like this to work but it requires the nix user to set an option.
         allowUnfree = true;
       };
     };
