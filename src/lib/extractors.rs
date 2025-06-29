@@ -396,7 +396,7 @@ pub fn extract_deb(input_path: &Path,) -> Result<(),io::Error>{
         let mut entry = entry_result.unwrap();
         // Create a new file with the same name as the archive entry:
         let mut file = File::create(
-            str::from_utf8(entry.header().identifier()).unwrap(),
+            std::str::from_utf8(entry.header().identifier()).unwrap(),
         ).unwrap();
         // The Entry object also acts as an io::Read, so we can easily copy the
         // contents of the archive entry into the file:
